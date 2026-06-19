@@ -1,0 +1,66 @@
+# ==============================
+# RescueNet AI — Docker Compose
+# Local development stack
+# ==============================
+
+version: "3.9"
+
+services:
+
+  # ---- PostgreSQL (local dev database) ----
+  db:
+    image: postgres:15-alpine
+    container_name: rescuenet_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rescuenet
+      POSTGRES_USER: rescuenet
+      POSTGRES_PASSWORD: rescuenet
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./seed/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+
+  # ---- FastAPI backend ----
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rescuenet_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://rescuenet:rescuenet@db:5432/rescuenet
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ---- Next.js frontend ----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rescuenet_frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  pgdata:
