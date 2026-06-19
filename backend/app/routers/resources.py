@@ -11,9 +11,9 @@ router = APIRouter()
 
 @router.get("/resources", response_model=ResourceListResponse)
 async def list_resources(
-    type: Optional[str] = Query(None, description="ambulance | helicopter | rescue_team | fire_truck"),
+    type: Optional[str] = Query(None, description="ambulance | helicopter | rescue_team | fire_truck | water_rescue"),
     status: Optional[str] = Query(None, description="available | deployed | maintenance"),
 ):
-    """List all emergency resources with optional filters."""
+    """List all emergency resources with optional type and status filters."""
     resources = mock_db.list_resources(type=type, status=status)
-    return ResourceListResponse(resources=resources)
+    return ResourceListResponse(resources=resources, total=len(resources))

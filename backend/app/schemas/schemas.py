@@ -5,7 +5,6 @@ Request and response models for all API endpoints.
 
 from pydantic import BaseModel, Field
 from typing import Optional, List, Any, Dict
-from datetime import datetime
 from enum import Enum
 
 
@@ -72,10 +71,10 @@ class IncidentResponse(BaseModel):
     id: str
     title: str
     type: str
-    description: Optional[str]
+    description: Optional[str] = None
     location: str
-    latitude: Optional[float]
-    longitude: Optional[float]
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     severity: int
     status: str
     created_at: str
@@ -95,20 +94,24 @@ class IncidentListResponse(BaseModel):
 class HospitalResponse(BaseModel):
     id: str
     name: str
-    address: Optional[str]
+    address: Optional[str] = None
     city: str
-    latitude: Optional[float]
-    longitude: Optional[float]
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     total_beds: int
     available_beds: int
     icu_beds: int
-    specializations: List[str]
-    contact_phone: Optional[str]
+    trauma_unit: bool = False
+    burn_unit: bool = False
+    blood_bank: bool = False
+    specializations: List[str] = []
+    contact_phone: Optional[str] = None
     is_active: bool
 
 
 class HospitalListResponse(BaseModel):
     hospitals: List[HospitalResponse]
+    total: int
 
 
 # ===========================
@@ -122,13 +125,14 @@ class ResourceResponse(BaseModel):
     quantity: int
     available: int
     status: str
-    location: Optional[str]
-    latitude: Optional[float]
-    longitude: Optional[float]
+    location: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class ResourceListResponse(BaseModel):
     resources: List[ResourceResponse]
+    total: int
 
 
 # ===========================
@@ -149,7 +153,7 @@ class HospitalRouting(BaseModel):
     name: str
     distance_km: float
     available_beds: int
-    patient_routing: int  # number of patients to send here
+    patient_routing: int
 
 
 class AlertMessages(BaseModel):
@@ -159,20 +163,35 @@ class AlertMessages(BaseModel):
 
 
 class RescuePlan(BaseModel):
-    priority: str
-    survivor_estimate: int
+    # Core fields
+    priority: str                       # P1-P5
+    severity: int                       # 1-5 (mirrors incident)
+    affected_area: str                  # location string
+    estimated_survivors: int
     survivor_probability: float
-    medical_priority: str
-    dispatch_urgency: str
-    resources: List[ResourceDispatch]
-    hospitals: List[HospitalRouting]
-    risk_warnings: List[str]
-    alert_messages: AlertMessages
+    priority_score: float               # 0.0 – 1.0
+    confidence_score: float             # 0.0 – 1.0
+
+    # Medical
+    medical_priority: str               # critical / high / medium / low
+    dispatch_urgency: str               # immediate / urgent / normal
+
+    # Recommendations
+    recommended_hospital: str           # primary hospital name
+    recommended_resources: List[ResourceDispatch]
+
+    # Full routing detail (optional extras)
+    hospitals: List[HospitalRouting] = []
+
+    # Alerts and warnings
+    alert_actions: AlertMessages
+    risk_warnings: List[str] = []
 
 
 class AgentDecisionSummary(BaseModel):
     agent: str
     output: str
+    step: int = 0
 
 
 class AgentExecuteResponse(BaseModel):
@@ -183,6 +202,24 @@ class AgentExecuteResponse(BaseModel):
 
 
 # ===========================
+# Agent log
+# ===========================
+
+class AgentLogEntry(BaseModel):
+    id: str
+    incident_id: Optional[str] = None
+    agent_name: str
+    output_data: Dict[str, Any] = {}
+    status: str
+    created_at: str
+
+
+class AgentLogResponse(BaseModel):
+    decisions: List[AgentLogEntry]
+    total: int
+
+
+# ===========================
 # Health
 # ===========================
 
@@ -190,3 +227,4 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     environment: str
+    llm_provider: str
