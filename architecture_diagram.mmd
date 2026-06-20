@@ -1,0 +1,67 @@
+graph TD
+    %% Styling Definitions
+    classDef input fill:#1e1b4b,stroke:#3730a3,stroke-width:2px,color:#a5b4fc;
+    classDef agent fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#93c5fd;
+    classDef process fill:#132547,stroke:#10b981,stroke-width:2px,color:#a7f3d0;
+    classDef output fill:#31100f,stroke:#ef4444,stroke-width:2px,color:#fca5a5;
+
+    %% Ingestion
+    Ingest["📝 Chaotic Emergency Report Ingestion<br/>(Location, Type, Description)"]:::input
+    
+    %% Pipeline
+    A1["🔍 Agent 1: Disaster Intelligence<br/>(Incident Classification & Severity)"]:::agent
+    A2["📊 Agent 2: Incident Understanding<br/>(Geolocation Normalization & Impact Radius)"]:::agent
+    A3["👥 Agent 3: Survivor Probability<br/>(Survival Likelihood & Estimated Count)"]:::agent
+    A4["🏥 Agent 4: Medical Triage<br/>(Trauma Assessment & Resource Needs)"]:::agent
+    A5["⚡ Agent 5: Priority Agent<br/>(Urgency Score & Dispatch P1-P5)"]:::agent
+    
+    %% Resource and Hospital Branches (Parallel Ingestion, Sequential Chaining)
+    A6["🚒 Agent 6: Resource Allocation<br/>(Match Available Regional Inventory)"]:::agent
+    A7["🏨 Agent 7: Hospital Coordination<br/>(Geospatial Distance & Bed Capacity Routing)"]:::agent
+    
+    A8["⚠️ Agent 8: Risk Prediction<br/>(Predict Secondary Hazards & Collapses)"]:::agent
+    A9["📡 Agent 9: Communication Agent<br/>(Draft Alerts: Field Team, Hospital, Public)"]:::agent
+    A10["🎯 Agent 10: Command Orchestrator<br/>(Synthesize & Assemble Plan JSON)"]:::agent
+
+    %% Target Outputs
+    OutPlan["📋 Actionable Rescue Plan JSON<br/>(Priority, Dispatches, Hospital Routing, Alerts, Hazards)"]:::output
+
+    %% Flow Relationships
+    Ingest --> A1
+    A1 -->|t1: Severity/Type| A2
+    A2 -->|t2: Geolocation/Damage| A3
+    A3 -->|t3: Stranded Count| A4
+    A4 -->|t4: Trauma Needs| A5
+    
+    %% Context Propagation
+    A5 -->|t5: Priority Level| A6
+    A4 & A5 --> A6
+    
+    A3 & A4 & A5 --> A7
+    A1 & A2 --> A8
+    
+    A5 & A6 & A7 & A8 --> A9
+    
+    %% Final Integration
+    A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 & A9 --> A10
+    A10 --> OutPlan
+
+    %% Subgraph labeling
+    subgraph Core Agent Pipeline (Context Chained)
+        A1
+        A2
+        A3
+        A4
+        A5
+    end
+
+    subgraph Allocation and Safety Planning
+        A6
+        A7
+        A8
+    end
+
+    subgraph Alerting & Synthesis
+        A9
+        A10
+    end

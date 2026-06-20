@@ -1,28 +1,26 @@
 "use client";
 
 /**
- * RescueNet AI — Dashboard Page
- * Schema-corrected to match FastAPI RescuePlan response exactly.
- *
- * Fixed fields (2026-06-20):
- *   survivor_estimate    → estimated_survivors
- *   resources            → recommended_resources
- *   alert_messages       → alert_actions
- *
- * All RescuePlan fields are now rendered with graceful null handling.
+ * RescueNet AI — Disaster Response Command Center Dashboard
+ * Redesigned for maximum visual impact, simulation control, and Telangana datasets.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import demoScenarios from "@/data/demo_scenarios.json";
+import telanganaEmergencyData from "@/data/telangana_emergency_dataset.json";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-// ─── Typed interfaces matching backend schemas.py exactly ──────────────────
+// ─── TypeScript Types ────────────────────────────────────────────────────────
 
 type Incident = {
   id: string;
   title: string;
   type: string;
   location: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
   severity: number;
   status: string;
   created_at: string;
@@ -47,21 +45,20 @@ type AlertActions = {
   public: string;
 };
 
-// Matches backend RescuePlan Pydantic model exactly
 type RescuePlan = {
   priority: string;
   severity: number;
   affected_area: string;
-  estimated_survivors: number;       // ← was: survivor_estimate (FIXED)
+  estimated_survivors: number;
   survivor_probability: number;
   priority_score: number;
   confidence_score: number;
   medical_priority: string;
   dispatch_urgency: string;
   recommended_hospital: string;
-  recommended_resources: ResourceDispatch[]; // ← was: resources (FIXED)
+  recommended_resources: ResourceDispatch[];
   hospitals: HospitalRouting[];
-  alert_actions: AlertActions;       // ← was: alert_messages (FIXED)
+  alert_actions: AlertActions;
   risk_warnings: string[];
 };
 
@@ -78,14 +75,14 @@ type AgentExecuteResponse = {
   agent_decisions: AgentDecision[];
 };
 
-// ─── Constants ──────────────────────────────────────────────────────────────
+// ─── Styling Constants ──────────────────────────────────────────────────────
 
 const SEVERITY_COLORS: Record<number, string> = {
-  1: "#22c55e",
-  2: "#86efac",
-  3: "#facc15",
-  4: "#fb923c",
-  5: "#ef4444",
+  1: "#10b981", // Emerald
+  2: "#34d399", // Light Emerald
+  3: "#fbbf24", // Amber
+  4: "#f97316", // Orange
+  5: "#ef4444", // Red
 };
 
 const SEVERITY_LABELS: Record<number, string> = {
@@ -98,17 +95,17 @@ const SEVERITY_LABELS: Record<number, string> = {
 
 const PRIORITY_COLORS: Record<string, string> = {
   P1: "#ef4444",
-  P2: "#fb923c",
-  P3: "#facc15",
-  P4: "#86efac",
-  P5: "#22c55e",
+  P2: "#f97316",
+  P3: "#fbbf24",
+  P4: "#34d399",
+  P5: "#10b981",
 };
 
 const MEDICAL_COLORS: Record<string, string> = {
   critical: "#ef4444",
-  high: "#fb923c",
-  medium: "#facc15",
-  low: "#22c55e",
+  high: "#f97316",
+  medium: "#fbbf24",
+  low: "#10b981",
 };
 
 const AGENT_ICONS: Record<string, string> = {
@@ -133,46 +130,46 @@ const RESOURCE_ICONS: Record<string, string> = {
   medical_unit: "💊",
 };
 
-// ─── Helper components ───────────────────────────────────────────────────────
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{
-      fontSize: "11px", fontWeight: 700, color: "#475569",
-      textTransform: "uppercase", letterSpacing: "1.5px",
-      marginBottom: "8px", marginTop: "20px",
-      paddingBottom: "4px", borderBottom: "1px solid #1e2d4a",
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function Badge({ label, color }: { label: string; color: string }) {
-  return (
-    <span style={{
-      fontSize: "12px", fontWeight: 700, padding: "4px 10px",
-      borderRadius: "6px",
-      background: color + "22", color, border: `1px solid ${color}44`,
-      whiteSpace: "nowrap",
-    }}>
-      {label}
-    </span>
-  );
-}
-
-// ─── Main page ───────────────────────────────────────────────────────────────
+const INCIDENT_ICONS: Record<string, string> = {
+  flood: "🌊",
+  fire: "🔥",
+  collapse: "🏚️",
+  cyclone: "🌀",
+  landslide: "⛰️",
+  earthquake: "🌋",
+  other: "🚨",
+};
 
 export default function DashboardPage() {
+  // Mode Selection
+  const [mode, setMode] = useState<"SIMULATION" | "LIVE">("SIMULATION");
+
+  // State Management
   const [apiStatus, setApiStatus] = useState<"loading" | "online" | "offline">("loading");
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [selected, setSelected] = useState<Incident | null>(null);
   const [response, setResponse] = useState<AgentExecuteResponse | null>(null);
+  
+  // Pipeline simulation states
   const [planLoading, setPlanLoading] = useState(false);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [simulatedDecisions, setSimulatedDecisions] = useState<AgentDecision[]>([]);
   const [apiError, setApiError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"plan" | "agents">("plan");
 
-  // Check API health on mount
+  // What-If Simulator Variables
+  const [floodIntensity, setFloodIntensity] = useState<number>(0); // 0 = default, 1 = severe (+1 severity)
+  const [hospitalsFull, setHospitalsFull] = useState<boolean>(false);
+  const [weatherDelay, setWeatherDelay] = useState<boolean>(false);
+
+  // Map Integration States
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const mapRef = useRef<any>(null);
+
+  // Dynamic alert ticker message
+  const [tickerMessage, setTickerMessage] = useState("COMMAND CENTER STATUS: STANDBY · WAITING FOR INCIDENT DISPATCH");
+
+  // 1. Check Backend API Status on Mount
   useEffect(() => {
     fetch(`${API_URL}/health`)
       .then((r) => r.json())
@@ -180,458 +177,763 @@ export default function DashboardPage() {
       .catch(() => setApiStatus("offline"));
   }, []);
 
-  // Load incidents list
+  // 2. Load Incidents based on mode
   useEffect(() => {
-    if (apiStatus !== "online") return;
-    fetch(`${API_URL}/api/v1/incidents?limit=20`)
-      .then((r) => r.json())
-      .then((data) => setIncidents(data.incidents || []))
-      .catch(() => {});
-  }, [apiStatus]);
+    if (mode === "LIVE") {
+      if (apiStatus !== "online") return;
+      fetch(`${API_URL}/api/v1/incidents?limit=20`)
+        .then((r) => r.json())
+        .then((data) => {
+          setIncidents(data.incidents || []);
+        })
+        .catch(() => {});
+    } else {
+      // Map demo_scenarios.json to Incident objects
+      const mockIncidents: Incident[] = demoScenarios.map((s) => ({
+        id: s.id,
+        title: s.title,
+        type: s.type,
+        location: s.location,
+        description: s.description,
+        latitude: s.latitude,
+        longitude: s.longitude,
+        severity: s.severity,
+        status: "active",
+        created_at: new Date().toISOString(),
+      }));
+      setIncidents(mockIncidents);
+      if (!selected && mockIncidents.length > 0) {
+        setSelected(mockIncidents[0]);
+      }
+    }
+  }, [mode, apiStatus]);
 
-  // Run agent pipeline for selected incident
-  async function runAgents(incidentId: string) {
-    setPlanLoading(true);
+  // 3. Leaflet Script & CSS Injection
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (document.getElementById("leaflet-js")) {
+      setMapLoaded(true);
+      return;
+    }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    link.id = "leaflet-css";
+    document.head.appendChild(link);
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.id = "leaflet-js";
+    script.async = true;
+    script.onload = () => setMapLoaded(true);
+    document.head.appendChild(script);
+  }, []);
+
+  // 4. Map rendering and Marker plotting
+  useEffect(() => {
+    if (!mapLoaded || typeof window === "undefined") return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    // Reset container if re-initializing
+    const container = L.DomUtil.get("map-container");
+    if (container) {
+      (container as any)._leaflet_id = null;
+    }
+
+    const mapCenterLat = selected ? selected.latitude : 17.9;
+    const mapCenterLon = selected ? selected.longitude : 79.2;
+    const zoom = selected ? 11 : 8;
+
+    const map = L.map("map-container").setView([mapCenterLat, mapCenterLon], zoom);
+    mapRef.current = map;
+
+    // Dark cartographic tiles for Command Center aesthetic
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Click handler to trigger custom incident trigger
+    map.on("click", (e: any) => {
+      handleMapClick(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Plot Telangana Emergency dataset items as custom colored circle markers
+    // Verified items in blue (Hospitals), orange (Fire Stations), purple (Disaster Offices), red (Blood banks)
+    telanganaEmergencyData.verified_dataset.forEach((item) => {
+      const color = item.type === "hospital" ? "#3b82f6" : item.type === "fire_station" ? "#f97316" : item.type === "disaster_office" ? "#a855f7" : "#ec4899";
+      L.circleMarker([item.latitude, item.longitude], {
+        radius: 6,
+        fillColor: color,
+        color: "#ffffff",
+        weight: 1,
+        fillOpacity: 0.8,
+      })
+        .addTo(map)
+        .bindPopup(`<b>${item.name}</b><br/>Type: ${item.type}<br/>Capacity: ${item.capacity}`);
+    });
+
+    telanganaEmergencyData.demo_dataset.forEach((item) => {
+      L.circleMarker([item.latitude, item.longitude], {
+        radius: 5,
+        fillColor: "#64748b", // Grey for demo dataset
+        color: "#cbd5e1",
+        weight: 1,
+        fillOpacity: 0.6,
+      })
+        .addTo(map)
+        .bindPopup(`<b>${item.name} (Demo)</b><br/>Type: ${item.type}`);
+    });
+
+    // If an incident is active, draw a pulsing alert marker & red warning zone radius
+    if (selected) {
+      // Impact Zone Overlay
+      L.circle([selected.latitude, selected.longitude], {
+        color: "#ef4444",
+        fillColor: "#ef4444",
+        fillOpacity: 0.15,
+        radius: 3500, // 3.5 km simulation radius
+        weight: 1,
+        dashArray: "4,4",
+      }).addTo(map);
+
+      // Pulse circle
+      L.circleMarker([selected.latitude, selected.longitude], {
+        radius: 12,
+        fillColor: "#ef4444",
+        color: "#ffffff",
+        weight: 2,
+        fillOpacity: 0.9,
+      })
+        .addTo(map)
+        .bindPopup(`<b>ALERT: ${selected.title}</b><br/>Severity: ${selected.severity}/5`)
+        .openPopup();
+    }
+
+    return () => {
+      map.remove();
+    };
+  }, [mapLoaded, selected]);
+
+  // Click on map to trigger simulation at that point
+  function handleMapClick(lat: number, lon: number) {
+    const customIncident: Incident = {
+      id: `custom-${Date.now()}`,
+      title: "Interactive Triggered Incident",
+      type: "flood",
+      location: `Coordinates: ${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+      description: "Emergency triggered directly by Command Center Operator clicking the tactical interface.",
+      latitude: lat,
+      longitude: lon,
+      severity: 3,
+      status: "active",
+      created_at: new Date().toISOString(),
+    };
+    setSelected(customIncident);
     setResponse(null);
     setApiError(null);
-    setActiveTab("plan");
-    try {
-      const res = await fetch(`${API_URL}/api/v1/agents/execute`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ incident_id: incidentId }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        setApiError(`API error ${res.status}: ${err?.detail ?? res.statusText}`);
-        return;
+    setTickerMessage(`TACTICAL TRIGGER: USER SPAWNED COLLAPSE WARNING AT ${lat.toFixed(3)}, ${lon.toFixed(3)}`);
+  }
+
+  // Handle Pipeline execution
+  async function runAgents(incidentId: string) {
+    if (!selected) return;
+    setPlanLoading(true);
+    setResponse(null);
+    setSimulatedDecisions([]);
+    setApiError(null);
+    setActiveStep(1);
+
+    setTickerMessage(`INJECTING REPORT FOR "${selected.title}"... SYSTEM PIPELINE SPINNING UP`);
+
+    if (mode === "LIVE") {
+      // LIVE MODE: Call Backend FastAPI API
+      try {
+        const interval = setInterval(() => {
+          setActiveStep((prev) => {
+            if (prev < 10) return prev + 1;
+            clearInterval(interval);
+            return prev;
+          });
+        }, 300);
+
+        const res = await fetch(`${API_URL}/api/v1/agents/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ incident_id: incidentId }),
+        });
+        
+        clearInterval(interval);
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          setApiError(`API error ${res.status}: ${err?.detail ?? res.statusText}`);
+          return;
+        }
+        const data: AgentExecuteResponse = await res.json();
+        
+        // Fast-forward animation to 10
+        setActiveStep(10);
+        setResponse(data);
+        setTickerMessage(`RESCUE SYSTEM CONVERGED. PRIORITY: ${data.rescue_plan.priority}. PLAN DISPATCHED`);
+      } catch (e) {
+        setApiError("Network error — Is the backend running on " + API_URL + "?");
+        console.error(e);
+      } finally {
+        setPlanLoading(false);
       }
-      const data: AgentExecuteResponse = await res.json();
-      setResponse(data);
-    } catch (e) {
-      setApiError("Network error — Is the backend running on " + API_URL + "?");
-      console.error(e);
-    } finally {
-      setPlanLoading(false);
+    } else {
+      // SIMULATION MODE: Simulate 10-Agent pipeline with timeout animations
+      const scenario = demoScenarios.find((s) => s.id === incidentId) || demoScenarios[0];
+      
+      // Construct base simulated output
+      let finalPlan = JSON.parse(JSON.stringify(scenario.rescue_plan)) as RescuePlan;
+      let finalDecisions = JSON.parse(JSON.stringify(scenario.agent_decisions)) as AgentDecision[];
+
+      // Apply WHAT-IF modifications
+      if (floodIntensity === 1) {
+        finalPlan.severity = 5;
+        finalPlan.estimated_survivors += 75;
+        finalPlan.survivor_probability = parseFloat(Math.min(0.98, finalPlan.survivor_probability + 0.05).toFixed(2));
+        finalPlan.priority_score = 0.99;
+        finalPlan.dispatch_urgency = "immediate";
+        finalPlan.risk_warnings.push("BLEV warning upgraded to CRITICAL structural damage");
+        
+        // Scale resources
+        finalPlan.recommended_resources = finalPlan.recommended_resources.map((r) => ({
+          ...r,
+          count: r.count + 4,
+        }));
+      }
+
+      if (hospitalsFull) {
+        finalPlan.recommended_hospital = "MGM Hospital Warangal (Emergency Overflow Route)";
+        finalPlan.hospitals = finalPlan.hospitals.map((h) => ({
+          ...h,
+          available_beds: 0,
+          patient_routing: 0,
+        })).concat([
+          { name: "Secondary Osmania Hub", distance_km: 14.2, available_beds: 80, patient_routing: finalPlan.estimated_survivors }
+        ]);
+        finalPlan.alert_actions.hospital = "HOSPITALS AT CAPACITY: Direct all MCI transports to Secondary Osmania Hub immediately.";
+        finalPlan.risk_warnings.push("Primary care routing failure - Hospital Bed capacity depleted");
+      }
+
+      if (weatherDelay) {
+        finalPlan.recommended_resources = finalPlan.recommended_resources.map((r) => ({
+          ...r,
+          eta_minutes: r.eta_minutes + 15,
+        }));
+        finalPlan.alert_actions.field_team += " WARNING: 15-minute weather delay transit restrictions active.";
+        finalPlan.risk_warnings.push("Extreme monsoonal winds slowing rotor evac support");
+      }
+
+      // Chain of steps simulation
+      let step = 1;
+      const stepInterval = setInterval(() => {
+        if (step <= 10) {
+          const decision = finalDecisions.find((d) => d.step === step);
+          if (decision) {
+            setSimulatedDecisions((prev) => [...prev, decision]);
+            setTickerMessage(`STEP ${step}/10: ${decision.agent.replace(/_/g, " ").toUpperCase()} IS ACTIVE...`);
+          }
+          setActiveStep(step);
+          step++;
+        } else {
+          clearInterval(stepInterval);
+          setResponse({
+            incident_id: selected.id,
+            status: "completed",
+            rescue_plan: finalPlan,
+            agent_decisions: finalDecisions,
+          });
+          setPlanLoading(false);
+          setTickerMessage(`SIMULATION PIPELINE CONVERGED SUCCESSFULLY. Tactically dispatched resources.`);
+        }
+      }, 400);
     }
   }
 
-  const plan = response?.rescue_plan ?? null;
+  const activePlan = response?.rescue_plan ?? null;
+  const decisionsToRender = mode === "LIVE" ? response?.agent_decisions : simulatedDecisions;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0f1e", color: "#e2e8f0", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#060a13", color: "#f8fafc", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      
+      {/* ── Dynamic Top Warning Banner / Ticker ── */}
+      <div style={{
+        background: "#1e1b4b", borderBottom: "1px solid #3730a3",
+        padding: "8px 20px", display: "flex", gap: "10px", alignItems: "center", fontSize: "12px",
+        fontFamily: "monospace", overflow: "hidden", color: "#a5b4fc",
+      }}>
+        <span style={{
+          background: "#ef4444", color: "#fff", padding: "1px 6px", borderRadius: "3px",
+          fontWeight: "bold", fontSize: "10px", animation: "pulse 1.5s infinite"
+        }}>
+          LIVE FEED
+        </span>
+        <div style={{ whiteSpace: "nowrap" }}>
+          {tickerMessage}
+        </div>
+      </div>
 
-      {/* ── Header ── */}
+      {/* ── Main Header ── */}
       <header style={{
-        background: "#0d1426", borderBottom: "1px solid #1e2d4a",
-        padding: "14px 32px", display: "flex", alignItems: "center", justifyContent: "space-between",
-        position: "sticky", top: 0, zIndex: 10,
+        background: "#0b1220", borderBottom: "1px solid #1e293b",
+        padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <span style={{ fontSize: "22px" }}>🚨</span>
+          <span style={{ fontSize: "28px" }}>🛡️</span>
           <div>
-            <h1 style={{ margin: 0, fontSize: "18px", fontWeight: 700, color: "#f1f5f9", letterSpacing: "0.5px" }}>
-              RescueNet AI
+            <h1 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#f8fafc", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+              RescueNet AI <span style={{ color: "#3b82f6", fontSize: "13px", fontWeight: "normal" }}>Command Center</span>
             </h1>
             <p style={{ margin: 0, fontSize: "11px", color: "#64748b" }}>
-              Multi-Agent Disaster Response Command Center
+              State of Telangana Emergency Response Systems
             </p>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        {/* ── Live / Simulation Switcher ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <div style={{
+            background: "#0f172a", border: "1px solid #334155", borderRadius: "8px", padding: "4px",
+            display: "flex", gap: "4px"
+          }}>
+            <button
+              onClick={() => { setMode("SIMULATION"); setResponse(null); }}
+              style={{
+                padding: "6px 14px", borderRadius: "6px", border: "none", fontSize: "11px", fontWeight: 700,
+                cursor: "pointer", background: mode === "SIMULATION" ? "#3b82f6" : "transparent",
+                color: mode === "SIMULATION" ? "#ffffff" : "#94a3b8", transition: "all 0.2s"
+              }}
+            >
+              💻 SIMULATION MODE
+            </button>
+            <button
+              onClick={() => { setMode("LIVE"); setResponse(null); }}
+              style={{
+                padding: "6px 14px", borderRadius: "6px", border: "none", fontSize: "11px", fontWeight: 700,
+                cursor: "pointer", background: mode === "LIVE" ? "#3b82f6" : "transparent",
+                color: mode === "LIVE" ? "#ffffff" : "#94a3b8", transition: "all 0.2s"
+              }}
+            >
+              📡 LIVE MODE
+            </button>
+          </div>
+
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{
               width: "8px", height: "8px", borderRadius: "50%", display: "inline-block",
-              background: apiStatus === "online" ? "#22c55e" : apiStatus === "offline" ? "#ef4444" : "#facc15",
+              background: apiStatus === "online" ? "#10b981" : apiStatus === "offline" ? "#ef4444" : "#fbbf24",
             }} />
             <span style={{ fontSize: "12px", color: "#94a3b8" }}>
-              {apiStatus === "loading" ? "Connecting…" : apiStatus === "online" ? "API Online" : "API Offline"}
+              {apiStatus === "loading" ? "Connecting…" : apiStatus === "online" ? "API Connected" : "Offline"}
             </span>
           </div>
-          <a
-            href={`${API_URL}/docs`}
-            target="_blank"
-            rel="noreferrer"
-            style={{ fontSize: "12px", color: "#3b82f6", textDecoration: "none" }}
-          >
-            /docs ↗
-          </a>
         </div>
       </header>
 
-      {/* ── Offline banner ── */}
-      {apiStatus === "offline" && (
-        <div style={{ background: "#7f1d1d", color: "#fca5a5", padding: "10px 32px", fontSize: "13px" }}>
-          ⚠️ Backend API is offline. Start it with:{" "}
-          <code style={{ background: "#450a0a", padding: "2px 6px", borderRadius: "4px" }}>
-            python -m uvicorn app.main:app --port 8000
-          </code>
-        </div>
-      )}
-
-      <main style={{ padding: "28px 32px", maxWidth: "1500px", margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "380px 1fr", gap: "28px", alignItems: "start" }}>
-
-          {/* ── Left: Incident List ── */}
-          <div>
-            <div style={{
-              fontSize: "11px", fontWeight: 700, color: "#475569",
-              textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "12px",
-            }}>
-              Active Incidents ({incidents.length})
+      {/* Grid Dashboard */}
+      <main style={{ padding: "24px 32px", maxWidth: "1600px", margin: "0 auto" }}>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "350px 1fr 350px", gap: "24px", marginBottom: "24px" }}>
+          
+          {/* 1. Incident Live Feed */}
+          <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
+            <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
+              🚨 INCIDENT FEED ({incidents.length})
             </div>
 
-            {incidents.length === 0 && apiStatus === "online" && (
-              <div style={{ color: "#64748b", padding: "24px", textAlign: "center", border: "1px dashed #1e293b", borderRadius: "8px", fontSize: "13px" }}>
-                No incidents found.
-              </div>
-            )}
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "400px", overflowY: "auto" }}>
               {incidents.map((inc) => (
                 <div
                   key={inc.id}
-                  id={`incident-card-${inc.id}`}
-                  onClick={() => { setSelected(inc); setResponse(null); setApiError(null); setActiveTab("plan"); }}
+                  onClick={() => { setSelected(inc); setResponse(null); setApiError(null); }}
                   style={{
-                    background: selected?.id === inc.id ? "#0f2044" : "#0d1426",
-                    border: `1px solid ${selected?.id === inc.id ? "#3b82f6" : "#1e2d4a"}`,
-                    borderRadius: "10px", padding: "14px", cursor: "pointer",
-                    transition: "border-color 0.15s, background 0.15s",
+                    background: selected?.id === inc.id ? "#13233f" : "#0d1527",
+                    border: `1px solid ${selected?.id === inc.id ? "#3b82f6" : "#1e293b"}`,
+                    borderRadius: "8px", padding: "12px", cursor: "pointer", transition: "all 0.15s"
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
-                    <span style={{ fontWeight: 600, fontSize: "14px", color: "#f1f5f9", lineHeight: 1.3 }}>
-                      {inc.title}
-                    </span>
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                      <span style={{ fontSize: "16px" }}>{INCIDENT_ICONS[inc.type] || "🚨"}</span>
+                      <span style={{ fontWeight: 700, fontSize: "13px", color: "#f8fafc" }}>{inc.title}</span>
+                    </div>
                     <span style={{
-                      fontSize: "10px", fontWeight: 700, padding: "2px 7px", borderRadius: "5px", marginLeft: "8px", flexShrink: 0,
-                      background: (SEVERITY_COLORS[inc.severity] ?? "#94a3b8") + "22",
-                      color: SEVERITY_COLORS[inc.severity] ?? "#94a3b8",
-                      border: `1px solid ${(SEVERITY_COLORS[inc.severity] ?? "#94a3b8")}44`,
+                      fontSize: "9px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px",
+                      background: (SEVERITY_COLORS[inc.severity] ?? "#64748b") + "22",
+                      color: SEVERITY_COLORS[inc.severity] ?? "#64748b",
+                      border: `1px solid ${SEVERITY_COLORS[inc.severity]}33`
                     }}>
-                      {SEVERITY_LABELS[inc.severity] ?? `S${inc.severity}`}
+                      {SEVERITY_LABELS[inc.severity]}
                     </span>
                   </div>
-                  <div style={{ fontSize: "12px", color: "#64748b" }}>
-                    📍 {inc.location ?? "Unknown"}&nbsp;•&nbsp;
-                    🏷️ {(inc.type ?? "?").toUpperCase()}&nbsp;•&nbsp;
-                    🔵 {inc.status ?? "?"}
+                  <div style={{ fontSize: "11px", color: "#64748b" }}>
+                    📍 {inc.location}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* ── Right: Command Panel ── */}
-          <div>
-
-            {/* Empty state */}
-            {!selected && (
-              <div style={{
-                color: "#475569", padding: "60px 24px", textAlign: "center",
-                border: "1px dashed #1e293b", borderRadius: "12px", fontSize: "14px",
-              }}>
-                ← Select an incident to run the AI rescue pipeline
-              </div>
-            )}
 
             {selected && (
-              <div style={{ background: "#0d1426", border: "1px solid #1e2d4a", borderRadius: "12px", padding: "24px" }}>
-
-                {/* Incident title */}
-                <div style={{ marginBottom: "16px" }}>
-                  <div style={{ fontSize: "17px", fontWeight: 700, color: "#f1f5f9", marginBottom: "4px" }}>
-                    {selected.title}
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#475569" }}>
-                    ID: {selected.id} &nbsp;·&nbsp; {selected.location}
-                  </div>
+              <div style={{ marginTop: "16px", padding: "12px", background: "#0d1527", borderRadius: "8px", border: "1px solid #1e293b" }}>
+                <div style={{ fontSize: "11px", color: "#64748b", textTransform: "uppercase", fontWeight: 700, marginBottom: "4px" }}>
+                  Active Assessment
                 </div>
-
-                {/* Run pipeline button */}
+                <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: 1.4 }}>
+                  {selected.description}
+                </div>
+                
                 <button
                   id="run-agents-btn"
                   onClick={() => runAgents(selected.id)}
                   disabled={planLoading}
                   style={{
-                    width: "100%", padding: "11px", borderRadius: "8px", border: "none",
-                    background: planLoading ? "#1e3a5f" : "#1d4ed8", color: "#fff",
-                    fontSize: "14px", fontWeight: 600,
-                    cursor: planLoading ? "not-allowed" : "pointer",
-                    marginBottom: "20px", transition: "background 0.15s",
+                    width: "100%", padding: "10px", borderRadius: "6px", border: "none", marginTop: "12px",
+                    background: planLoading ? "#1e3a8a" : "#2563eb", color: "#fff",
+                    fontSize: "12px", fontWeight: 700, cursor: planLoading ? "not-allowed" : "pointer",
+                    boxShadow: "0 0 10px rgba(37, 99, 235, 0.4)", transition: "all 0.2s"
                   }}
                 >
-                  {planLoading ? "⚙️  Running 10 AI Agents…" : "🤖  Run Rescue Pipeline"}
+                  {planLoading ? "🧠 Orchestrating Agents..." : "⚡ RUN RESCUE PIPELINE"}
                 </button>
-
-                {/* API error */}
-                {apiError && (
-                  <div style={{
-                    color: "#fca5a5", background: "#7f1d1d", padding: "12px",
-                    borderRadius: "6px", fontSize: "13px", marginBottom: "16px",
-                  }}>
-                    ❌ {apiError}
-                  </div>
-                )}
-
-                {/* Rescue plan display */}
-                {plan && (
-                  <>
-                    {/* ── Tab bar ── */}
-                    <div style={{ display: "flex", gap: "4px", marginBottom: "16px" }}>
-                      {(["plan", "agents"] as const).map((tab) => (
-                        <button
-                          key={tab}
-                          id={`tab-${tab}`}
-                          onClick={() => setActiveTab(tab)}
-                          style={{
-                            padding: "6px 16px", borderRadius: "6px", border: "none",
-                            fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                            background: activeTab === tab ? "#1d4ed8" : "#0a0f1e",
-                            color: activeTab === tab ? "#fff" : "#64748b",
-                          }}
-                        >
-                          {tab === "plan" ? "🗂 Rescue Plan" : `🤖 Agent Log (${response?.agent_decisions?.length ?? 0})`}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* ── PLAN TAB ── */}
-                    {activeTab === "plan" && (
-                      <div id="rescue-plan-panel">
-
-                        {/* ── Status badges row ── */}
-                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
-                          <Badge
-                            label={`Priority ${plan.priority ?? "N/A"}`}
-                            color={PRIORITY_COLORS[plan.priority] ?? "#94a3b8"}
-                          />
-                          <Badge
-                            label={`Medical: ${(plan.medical_priority ?? "N/A").toUpperCase()}`}
-                            color={MEDICAL_COLORS[plan.medical_priority] ?? "#94a3b8"}
-                          />
-                          <Badge
-                            label={`Dispatch: ${(plan.dispatch_urgency ?? "N/A").toUpperCase()}`}
-                            color="#3b82f6"
-                          />
-                          <Badge
-                            label={`Severity ${plan.severity ?? "N/A"}/5`}
-                            color={SEVERITY_COLORS[plan.severity] ?? "#94a3b8"}
-                          />
-                        </div>
-
-                        {/* ── Key metrics grid ── */}
-                        <SectionLabel>Situation Assessment</SectionLabel>
-                        <div style={{
-                          display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
-                          gap: "10px", marginBottom: "4px",
-                        }}>
-                          {[
-                            { label: "Estimated Survivors", value: (plan.estimated_survivors ?? "N/A").toString(), icon: "👥" },
-                            { label: "Survivor Probability", value: plan.survivor_probability != null ? `${(plan.survivor_probability * 100).toFixed(0)}%` : "N/A", icon: "📈" },
-                            { label: "Confidence Score", value: plan.confidence_score != null ? `${(plan.confidence_score * 100).toFixed(0)}%` : "N/A", icon: "🎯" },
-                          ].map((m) => (
-                            <div key={m.label} style={{
-                              background: "#0a0f1e", border: "1px solid #1e2d4a",
-                              borderRadius: "8px", padding: "12px",
-                            }}>
-                              <div style={{ fontSize: "18px", marginBottom: "4px" }}>{m.icon}</div>
-                              <div style={{ fontSize: "18px", fontWeight: 700, color: "#f1f5f9" }}>{m.value}</div>
-                              <div style={{ fontSize: "11px", color: "#475569", marginTop: "2px" }}>{m.label}</div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Affected area */}
-                        <div style={{ fontSize: "12px", color: "#64748b", margin: "10px 0 4px" }}>
-                          📍 Affected Area: <span style={{ color: "#94a3b8" }}>{plan.affected_area ?? "N/A"}</span>
-                          &nbsp;·&nbsp; Priority Score: <span style={{ color: "#94a3b8" }}>{plan.priority_score ?? "N/A"}</span>
-                        </div>
-
-                        {/* ── Recommended hospital ── */}
-                        <SectionLabel>Primary Hospital</SectionLabel>
-                        <div style={{
-                          background: "#0a0f1e", border: "1px solid #1e2d4a",
-                          borderRadius: "8px", padding: "10px 14px",
-                          fontSize: "13px", color: "#94a3b8", marginBottom: "4px",
-                          display: "flex", alignItems: "center", gap: "8px",
-                        }}>
-                          <span>🏥</span>
-                          <span style={{ fontWeight: 600, color: "#f1f5f9" }}>
-                            {plan.recommended_hospital ?? "N/A"}
-                          </span>
-                        </div>
-
-                        {/* Hospital routing table */}
-                        {(plan.hospitals ?? []).length > 0 && (
-                          <div style={{ marginTop: "6px" }}>
-                            {(plan.hospitals ?? []).map((h, i) => (
-                              <div key={i} style={{
-                                display: "flex", justifyContent: "space-between",
-                                padding: "6px 0", borderBottom: "1px solid #1e2d4a",
-                                fontSize: "12px",
-                              }}>
-                                <span style={{ color: "#94a3b8" }}>{h.name ?? "N/A"}</span>
-                                <span style={{ color: "#64748b" }}>
-                                  {h.distance_km ?? "?"}km away &nbsp;·&nbsp;
-                                  {h.available_beds ?? "?"} beds &nbsp;·&nbsp;
-                                  <span style={{ color: "#fb923c" }}>{h.patient_routing ?? "?"} patients</span>
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* ── Resources dispatched ── */}
-                        <SectionLabel>Resources Dispatched</SectionLabel>
-                        {(plan.recommended_resources ?? []).length === 0 ? (
-                          <div style={{ fontSize: "13px", color: "#475569" }}>No resources listed.</div>
-                        ) : (
-                          <div id="resources-list">
-                            {(plan.recommended_resources ?? []).map((r, i) => (
-                              <div key={i} style={{
-                                display: "flex", justifyContent: "space-between", alignItems: "center",
-                                padding: "8px 0", borderBottom: "1px solid #1e2d4a", fontSize: "13px",
-                              }}>
-                                <span style={{ color: "#94a3b8" }}>
-                                  {RESOURCE_ICONS[r.type] ?? "🔧"} {(r.type ?? "?").replace(/_/g, " ")}
-                                </span>
-                                <span>
-                                  <span style={{ color: "#f1f5f9", fontWeight: 600 }}>{r.count ?? "?"} units</span>
-                                  <span style={{ color: "#475569" }}> · ETA </span>
-                                  <span style={{ color: "#22c55e" }}>{r.eta_minutes ?? "?"}min</span>
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* ── Risk warnings ── */}
-                        {(plan.risk_warnings ?? []).length > 0 && (
-                          <>
-                            <SectionLabel>⚠️ Risk Warnings</SectionLabel>
-                            <div id="risk-warnings-list">
-                              {(plan.risk_warnings ?? []).map((w, i) => (
-                                <div key={i} style={{
-                                  background: "#431407", border: "1px solid #92400e",
-                                  borderRadius: "6px", padding: "8px 12px",
-                                  fontSize: "12px", color: "#fbbf24", marginBottom: "6px",
-                                }}>
-                                  ⚠️ {w}
-                                </div>
-                              ))}
-                            </div>
-                          </>
-                        )}
-
-                        {/* ── Alert actions (FIXED: was alert_messages) ── */}
-                        {plan.alert_actions && (
-                          <>
-                            <SectionLabel>📡 Alert Actions</SectionLabel>
-                            <div id="alert-actions-panel">
-                              {[
-                                { key: "field_team", label: "Field Team", icon: "👷", color: "#3b82f6" },
-                                { key: "hospital",   label: "Hospital",   icon: "🏥", color: "#a855f7" },
-                                { key: "public",     label: "Public",     icon: "📢", color: "#22c55e" },
-                              ].map(({ key, label, icon, color }) => {
-                                const msg = (plan.alert_actions as Record<string, string>)[key];
-                                return (
-                                  <div key={key} style={{
-                                    background: "#0a0f1e", border: `1px solid ${color}33`,
-                                    borderRadius: "8px", padding: "10px 12px", marginBottom: "8px",
-                                  }}>
-                                    <div style={{
-                                      fontSize: "10px", fontWeight: 700, color, textTransform: "uppercase",
-                                      letterSpacing: "1px", marginBottom: "5px",
-                                    }}>
-                                      {icon} {label}
-                                    </div>
-                                    <div style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.5 }}>
-                                      {msg ?? <span style={{ color: "#475569" }}>No message available</span>}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-
-                    {/* ── AGENTS TAB ── */}
-                    {activeTab === "agents" && (
-                      <div id="agent-decisions-panel">
-                        <SectionLabel>10-Agent Pipeline Execution Log</SectionLabel>
-                        {(response?.agent_decisions ?? []).length === 0 ? (
-                          <div style={{ fontSize: "13px", color: "#475569" }}>No agent decisions recorded.</div>
-                        ) : (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                            {(response?.agent_decisions ?? []).map((d, i) => (
-                              <div key={i} style={{
-                                background: "#0a0f1e", border: "1px solid #1e2d4a",
-                                borderRadius: "8px", padding: "10px 12px",
-                              }}>
-                                <div style={{
-                                  display: "flex", alignItems: "center", gap: "8px",
-                                  marginBottom: "5px",
-                                }}>
-                                  <span style={{
-                                    width: "20px", height: "20px", borderRadius: "50%",
-                                    background: "#1e3a5f", display: "flex", alignItems: "center",
-                                    justifyContent: "center", fontSize: "10px", fontWeight: 700,
-                                    color: "#60a5fa", flexShrink: 0,
-                                  }}>
-                                    {d.step ?? i + 1}
-                                  </span>
-                                  <span style={{ fontSize: "12px", fontWeight: 600, color: "#60a5fa" }}>
-                                    {AGENT_ICONS[d.agent] ?? "🤖"} {(d.agent ?? "unknown").replace(/_/g, " ")}
-                                  </span>
-                                  <span style={{
-                                    marginLeft: "auto", fontSize: "10px", fontWeight: 700,
-                                    padding: "2px 6px", borderRadius: "4px",
-                                    background: "#14532d", color: "#86efac",
-                                  }}>
-                                    ✓ done
-                                  </span>
-                                </div>
-                                <div style={{ fontSize: "12px", color: "#64748b", lineHeight: 1.5, paddingLeft: "28px" }}>
-                                  {d.output ?? "No output recorded."}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
               </div>
             )}
+          </section>
 
-            {/* ── Map placeholder ── */}
+          {/* 2. Tactical Command Map */}
+          <section style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{
-              marginTop: "20px", height: "160px", border: "1px dashed #1e293b",
-              borderRadius: "10px", display: "flex", alignItems: "center",
-              justifyContent: "center", flexDirection: "column", gap: "6px", color: "#334155",
+              flex: 1, height: "450px", background: "#0b1220", border: "1px solid #1e293b",
+              borderRadius: "12px", overflow: "hidden", position: "relative"
             }}>
-              <span style={{ fontSize: "28px" }}>🗺️</span>
-              <span style={{ fontSize: "13px" }}>Map Component</span>
-              <span style={{ fontSize: "11px", color: "#1e293b" }}>Leaflet / Google Maps — coming next</span>
+              <div id="map-container" style={{ width: "100%", height: "100%" }} />
+              
+              <div style={{
+                position: "absolute", bottom: "10px", left: "10px", zIndex: 1000,
+                background: "rgba(11, 18, 32, 0.85)", border: "1px solid #1e293b",
+                padding: "8px 12px", borderRadius: "6px", fontSize: "10px", color: "#94a3b8"
+              }}>
+                📌 <b>LEGEND:</b> <span style={{ color: "#ef4444" }}>● Incident</span> | <span style={{ color: "#3b82f6" }}>● Hospital</span> | <span style={{ color: "#f97316" }}>● Fire Station</span>
+              </div>
             </div>
+          </section>
+
+          {/* 3. What-If Simulator & Simulation Controls */}
+          <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
+            <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
+              🎛️ WHAT-IF SIMULATOR
+            </div>
+
+            {mode === "LIVE" ? (
+              <div style={{ fontSize: "12px", color: "#64748b", textAlign: "center", padding: "30px 10px" }}>
+                🚫 What-If Simulator is only active in <b>Simulation Mode</b>.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: 600, color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+                    Flood Peak Surge Intensity
+                  </label>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      onClick={() => setFloodIntensity(0)}
+                      style={{
+                        flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
+                        background: floodIntensity === 0 ? "#1e293b" : "transparent",
+                        color: floodIntensity === 0 ? "#3b82f6" : "#94a3b8", cursor: "pointer"
+                      }}
+                    >
+                      Normal
+                    </button>
+                    <button
+                      onClick={() => setFloodIntensity(1)}
+                      style={{
+                        flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
+                        background: floodIntensity === 1 ? "#ef444422" : "transparent",
+                        color: floodIntensity === 1 ? "#ef4444" : "#94a3b8", cursor: "pointer"
+                      }}
+                    >
+                      Critical Surge (+1)
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Gandhi Hospital Capacity Full</span>
+                  <input
+                    type="checkbox"
+                    checked={hospitalsFull}
+                    onChange={(e) => setHospitalsFull(e.target.checked)}
+                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                  />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Severe Monsoon Weather Delay</span>
+                  <input
+                    type="checkbox"
+                    checked={weatherDelay}
+                    onChange={(e) => setWeatherDelay(e.target.checked)}
+                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                  />
+                </div>
+
+                <div style={{ borderTop: "1px solid #1e293b", paddingTop: "14px", fontSize: "11px", color: "#64748b" }}>
+                  💡 Changing parameters automatically modifies resource allocations, ETAs, and hospital routing on subsequent pipeline runs.
+                </div>
+              </div>
+            )}
+          </section>
+
+        </div>
+
+        {/* Bottom panels */}
+        {planLoading || activePlan ? (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr 1fr", gap: "24px" }}>
+            
+            {/* A. AI Rescue Brain Execution Timelines */}
+            <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
+                🧠 AI RESCUE BRAIN PIPELINE
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {Array.from({ length: 10 }).map((_, idx) => {
+                  const stepNum = idx + 1;
+                  const agentKeys = Object.keys(AGENT_ICONS);
+                  const agentKey = agentKeys[idx];
+                  const decision = decisionsToRender?.find((d) => d.step === stepNum);
+                  const isActive = stepNum === activeStep;
+                  const isDone = stepNum < activeStep || activeStep === 10;
+
+                  return (
+                    <div
+                      key={stepNum}
+                      style={{
+                        display: "flex", gap: "10px", alignItems: "flex-start",
+                        opacity: isActive ? 1 : isDone ? 0.85 : 0.4,
+                        padding: "8px", borderRadius: "6px",
+                        background: isActive ? "#132547" : "transparent",
+                        border: `1px solid ${isActive ? "#3b82f6" : "transparent"}`,
+                        transition: "all 0.25s"
+                      }}
+                    >
+                      <span style={{
+                        width: "18px", height: "18px", borderRadius: "50%",
+                        background: isDone ? "#10b981" : isActive ? "#3b82f6" : "#1e293b",
+                        color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "9px", fontWeight: "bold", flexShrink: 0
+                      }}>
+                        {isDone ? "✓" : stepNum}
+                      </span>
+
+                      <div style={{ fontSize: "12px" }}>
+                        <span style={{ fontWeight: 700, color: isActive ? "#3b82f6" : "#cbd5e1" }}>
+                          {AGENT_ICONS[agentKey]} {agentKey.replace(/_/g, " ").toUpperCase()}
+                        </span>
+                        {isActive && (
+                          <div style={{ fontSize: "10px", color: "#60a5fa", marginTop: "2px", fontStyle: "italic" }}>
+                            Agent reasoning in progress...
+                          </div>
+                        )}
+                        {decision && (
+                          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>
+                            {decision.output}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* B. Core Rescue Plan Details */}
+            <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px" }}>
+                  📋 ACTIONABLE RESCUE PLAN
+                </div>
+                
+                {activePlan && (
+                  <span style={{
+                    fontSize: "10px", fontWeight: 800, padding: "2px 8px", borderRadius: "4px",
+                    background: PRIORITY_COLORS[activePlan.priority] + "22",
+                    color: PRIORITY_COLORS[activePlan.priority],
+                    border: `1px solid ${PRIORITY_COLORS[activePlan.priority]}`
+                  }}>
+                    PRIORITY {activePlan.priority}
+                  </span>
+                )}
+              </div>
+
+              {activePlan ? (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "20px" }}>
+                    <div style={{ background: "#0d1527", padding: "12px", borderRadius: "8px", border: "1px solid #1e293b" }}>
+                      <div style={{ fontSize: "18px" }}>👥</div>
+                      <div style={{ fontSize: "16px", fontWeight: 800, color: "#f8fafc" }}>{activePlan.estimated_survivors}</div>
+                      <div style={{ fontSize: "10px", color: "#64748b" }}>Survivors Count</div>
+                    </div>
+                    <div style={{ background: "#0d1527", padding: "12px", borderRadius: "8px", border: "1px solid #1e293b" }}>
+                      <div style={{ fontSize: "18px" }}>📈</div>
+                      <div style={{ fontSize: "16px", fontWeight: 800, color: "#f8fafc" }}>{(activePlan.survivor_probability * 100).toFixed(0)}%</div>
+                      <div style={{ fontSize: "10px", color: "#64748b" }}>Survivor Prob.</div>
+                    </div>
+                    <div style={{ background: "#0d1527", padding: "12px", borderRadius: "8px", border: "1px solid #1e293b" }}>
+                      <div style={{ fontSize: "18px" }}>🎯</div>
+                      <div style={{ fontSize: "16px", fontWeight: 800, color: "#f8fafc" }}>{(activePlan.confidence_score * 100).toFixed(0)}%</div>
+                      <div style={{ fontSize: "10px", color: "#64748b" }}>Plan Confidence</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                    {/* Resources */}
+                    <div>
+                      <div style={{ fontSize: "11px", fontWeight: 700, color: "#475569", textTransform: "uppercase", marginBottom: "8px" }}>
+                        🚒 RESOURCE DEPLOYMENT
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {activePlan.recommended_resources.map((res, i) => (
+                          <div key={i} style={{
+                            display: "flex", justifyContent: "space-between", padding: "8px",
+                            background: "#0d1527", borderRadius: "6px", fontSize: "12px", border: "1px solid #1e293b"
+                          }}>
+                            <span>{RESOURCE_ICONS[res.type] || "🔧"} {res.type.replace(/_/g, " ").toUpperCase()}</span>
+                            <span style={{ fontWeight: "bold" }}>{res.count} Units (ETA {res.eta_minutes}m)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Hospitals */}
+                    <div>
+                      <div style={{ fontSize: "11px", fontWeight: 700, color: "#475569", textTransform: "uppercase", marginBottom: "8px" }}>
+                        🏥 HOSPITAL ROUTING
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {activePlan.hospitals.map((hosp, i) => (
+                          <div key={i} style={{
+                            padding: "8px", background: "#0d1527", borderRadius: "6px", fontSize: "12px", border: "1px solid #1e293b"
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold" }}>
+                              <span>🏥 {hosp.name}</span>
+                              <span style={{ color: "#3b82f6" }}>{hosp.patient_routing} patients</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#64748b", marginTop: "2px" }}>
+                              <span>Dist: {hosp.distance_km} km</span>
+                              <span>Beds Available: {hosp.available_beds}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Alert Actions */}
+                  <div style={{ marginTop: "20px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#475569", textTransform: "uppercase", marginBottom: "8px" }}>
+                      📡 PREPARED ALERTS DISPATCH
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <div style={{ padding: "8px 12px", background: "#0d1527", borderLeft: "3px solid #3b82f6", borderRadius: "4px", fontSize: "11px" }}>
+                        <b>👷 FIELD TEAM:</b> {activePlan.alert_actions.field_team}
+                      </div>
+                      <div style={{ padding: "8px 12px", background: "#0d1527", borderLeft: "3px solid #a855f7", borderRadius: "4px", fontSize: "11px" }}>
+                        <b>🏥 HOSPITAL:</b> {activePlan.alert_actions.hospital}
+                      </div>
+                      <div style={{ padding: "8px 12px", background: "#0d1527", borderLeft: "3px solid #10b981", borderRadius: "4px", fontSize: "11px" }}>
+                        <b>📢 PUBLIC:</b> {activePlan.alert_actions.public}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "200px", color: "#64748b" }}>
+                  <span>⏳ Waiting for pipeline execution to complete...</span>
+                </div>
+              )}
+            </section>
+
+            {/* C. Risk Forecast Heatmap */}
+            <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
+                ⚠️ RISK PLOTS & FORECAST
+              </div>
+
+              {activePlan ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
+                      <span>Secondary Collapse Risk</span>
+                      <span style={{ color: "#ef4444", fontWeight: "bold" }}>85%</span>
+                    </div>
+                    <div style={{ height: "6px", background: "#1e293b", borderRadius: "3px", overflow: "hidden" }}>
+                      <div style={{ width: "85%", height: "100%", background: "linear-gradient(90deg, #10b981, #ef4444)" }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
+                      <span>Water Contamination</span>
+                      <span style={{ color: "#fbbf24", fontWeight: "bold" }}>60%</span>
+                    </div>
+                    <div style={{ height: "6px", background: "#1e293b", borderRadius: "3px", overflow: "hidden" }}>
+                      <div style={{ width: "60%", height: "100%", background: "linear-gradient(90deg, #10b981, #fbbf24)" }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
+                      <span>Plume Dispersion Risk</span>
+                      <span style={{ color: "#10b981", fontWeight: "bold" }}>15%</span>
+                    </div>
+                    <div style={{ height: "6px", background: "#1e293b", borderRadius: "3px", overflow: "hidden" }}>
+                      <div style={{ width: "15%", height: "100%", background: "#10b981" }} />
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: "10px", borderTop: "1px solid #1e293b", paddingTop: "14px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#cbd5e1", marginBottom: "6px" }}>
+                      SECONDARY WARNINGS:
+                    </div>
+                    {activePlan.risk_warnings.map((warn, i) => (
+                      <div key={i} style={{
+                        background: "#ef444411", color: "#fca5a5", border: "1px solid #ef444433",
+                        padding: "8px", borderRadius: "4px", fontSize: "11px", marginBottom: "6px"
+                      }}>
+                        • {warn}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "200px", color: "#64748b" }}>
+                  <span>⏳ Waiting for risk evaluations...</span>
+                </div>
+              )}
+            </section>
+
           </div>
+        ) : (
+          <div style={{
+            background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "60px",
+            textAlign: "center", color: "#64748b"
+          }}>
+            👉 Select an incident from the Live Feed on the left, then click <b>Run Rescue Pipeline</b> to initialize the tactical response center.
+          </div>
+        )}
 
-        </div>
-
-        {/* Footer */}
-        <div style={{ marginTop: "40px", textAlign: "center", color: "#334155", fontSize: "11px" }}>
-          RescueNet AI v0.1.0 · API:{" "}
-          <a href={`${API_URL}/docs`} target="_blank" rel="noreferrer" style={{ color: "#3b82f6" }}>
-            {API_URL}/docs
-          </a>
-        </div>
       </main>
+
+      <footer style={{ background: "#070c16", borderTop: "1px solid #1e293b", padding: "20px", textAlign: "center", fontSize: "11px", color: "#475569" }}>
+        RescueNet AI v0.1.0 · Telangana State Emergency Command Center Demo · API: <a href={`${API_URL}/docs`} target="_blank" rel="noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>{API_URL}/docs ↗</a>
+      </footer>
+
     </div>
   );
 }

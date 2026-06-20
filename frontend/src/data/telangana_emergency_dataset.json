@@ -1,0 +1,136 @@
+{
+  "verified_dataset": [
+    {
+      "name": "Gandhi Hospital",
+      "district": "Hyderabad",
+      "latitude": 17.4244,
+      "longitude": 78.5020,
+      "phone": "+91-40-27505566",
+      "type": "hospital",
+      "capacity": "1500 beds",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "Osmania General Hospital",
+      "district": "Hyderabad",
+      "latitude": 17.3781,
+      "longitude": 78.4735,
+      "phone": "+91-40-24600146",
+      "type": "hospital",
+      "capacity": "1100 beds",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "MGM Hospital Warangal",
+      "district": "Warangal",
+      "latitude": 17.9942,
+      "longitude": 79.5925,
+      "phone": "+91-870-2441355",
+      "type": "hospital",
+      "capacity": "1000 beds",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "Telangana State Disaster Response & Fire Services HQ",
+      "district": "Hyderabad",
+      "latitude": 17.4099,
+      "longitude": 78.4716,
+      "phone": "+91-40-23450624",
+      "type": "disaster_office",
+      "capacity": "State Command Center",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "Secunderabad Fire Station",
+      "district": "Hyderabad",
+      "latitude": 17.4399,
+      "longitude": 78.4983,
+      "phone": "+91-40-27802101",
+      "type": "fire_station",
+      "capacity": "8 Fire Engines",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "Warangal Central Fire Station",
+      "district": "Warangal",
+      "latitude": 17.9693,
+      "longitude": 79.5929,
+      "phone": "+91-870-2425101",
+      "type": "fire_station",
+      "capacity": "4 Fire Engines",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "Indian Red Cross Society Blood Bank",
+      "district": "Hyderabad",
+      "latitude": 17.3995,
+      "longitude": 78.4754,
+      "phone": "+91-40-23355008",
+      "type": "blood_bank",
+      "capacity": "500 units/day",
+      "verification_level": "HIGH"
+    },
+    {
+      "name": "108 Emergency Response Hub (GVK EMRI)",
+      "district": "Medchal-Malkajgiri",
+      "latitude": 17.5332,
+      "longitude": 78.4878,
+      "phone": "108",
+      "type": "ambulance_hub",
+      "capacity": "150 Ambulances",
+      "verification_level": "HIGH"
+    }
+  ],
+  "demo_dataset": [
+    {
+      "name": "Nampally Emergency Dispatch Hub",
+      "district": "Hyderabad",
+      "latitude": 17.3875,
+      "longitude": 78.4688,
+      "phone": "+91-999-MOCK-AMB",
+      "type": "ambulance_hub",
+      "capacity": "25 Ambulances",
+      "verification_level": "MEDIUM"
+    },
+    {
+      "name": "Hitec City Fire Response Station",
+      "district": "Rangareddy",
+      "latitude": 17.4435,
+      "longitude": 78.3772,
+      "phone": "+91-999-MOCK-FIRE",
+      "type": "fire_station",
+      "capacity": "5 Fire Engines",
+      "verification_level": "MEDIUM"
+    },
+    {
+      "name": "Hitec City Emergency Hospital",
+      "district": "Rangareddy",
+      "latitude": 17.4485,
+      "longitude": 78.3741,
+      "phone": "+91-999-MOCK-HOSP",
+      "type": "hospital",
+      "capacity": "150 beds",
+      "verification_level": "MEDIUM"
+    },
+    {
+      "name": "Aarohi Blood Bank Warangal",
+      "district": "Warangal",
+      "latitude": 17.9784,
+      "longitude": 79.6012,
+      "phone": "+91-999-MOCK-BLD",
+      "type": "blood_bank",
+      "capacity": "100 units/day",
+      "verification_level": "MEDIUM"
+    },
+    {
+      "name": "Warangal Disaster Management Cell",
+      "district": "Warangal",
+      "latitude": 17.9689,
+      "longitude": 79.5940,
+      "phone": "+91-999-MOCK-DIS",
+      "type": "disaster_office",
+      "capacity": "District Command Cell",
+      "verification_level": "MEDIUM"
+    }
+  ]
+}

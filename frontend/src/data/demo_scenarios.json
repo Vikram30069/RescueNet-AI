@@ -1,0 +1,165 @@
+[
+  {
+    "id": "scenario-hyd-flood",
+    "title": "Hyderabad Flood Simulation",
+    "type": "flood",
+    "description": "Extreme 350mm rainfall in 12 hours. Musi River overflowing. Begumpet and Nampally residential zones severely flooded. 220+ stranded on rooftops.",
+    "location": "Begumpet, Hyderabad, Telangana",
+    "latitude": 17.4411,
+    "longitude": 78.4735,
+    "severity": 5,
+    "estimated_survivors": 220,
+    "rescue_plan": {
+      "priority": "P1",
+      "severity": 5,
+      "affected_area": "Begumpet & Nampally, Hyderabad, Telangana",
+      "estimated_survivors": 220,
+      "survivor_probability": 0.92,
+      "priority_score": 0.95,
+      "confidence_score": 0.89,
+      "medical_priority": "critical",
+      "dispatch_urgency": "immediate",
+      "recommended_hospital": "Gandhi Hospital",
+      "recommended_resources": [
+        {"type": "ambulance", "count": 12, "eta_minutes": 8},
+        {"type": "rescue_team", "count": 8, "eta_minutes": 12},
+        {"type": "helicopter", "count": 2, "eta_minutes": 15},
+        {"type": "water_rescue", "count": 6, "eta_minutes": 10}
+      ],
+      "hospitals": [
+        {"name": "Gandhi Hospital", "distance_km": 2.4, "available_beds": 120, "patient_routing": 140},
+        {"name": "Osmania General Hospital", "distance_km": 5.1, "available_beds": 85, "patient_routing": 80}
+      ],
+      "alert_actions": {
+        "field_team": "DEPLOY IMMEDIATE: All water rescue and heli-evac units dispatch to Begumpet coordinate zone. Critical medical triage active.",
+        "hospital": "MCI LEVEL 1: Gandhi and Osmania Hospitals activate mass casualty protocols. Clear ER bays for 220 incoming casualties.",
+        "public": "RED ALERT: Begumpet and surrounding areas are under severe flood warning. Move to upper floors immediately. Avoid low-lying roads."
+      },
+      "risk_warnings": [
+        "Water level rise of 1.2m expected in next 2 hours",
+        "Sub-station failure warning - absolute power blackout in Begumpet",
+        "Waterborne pathogen contamination risk"
+      ]
+    },
+    "agent_decisions": [
+      {"step": 1, "agent": "disaster_intelligence", "output": "Classified: FLOOD. Severity: 5/5. Major risk zone defined around Hyderabad Central Basin."},
+      {"step": 2, "agent": "incident_understanding", "output": "Water levels at +2.4m. 8 critical residential zones inundated. Drainage capacity exceeded."},
+      {"step": 3, "agent": "survivor_probability", "output": "Calculated 92% survival probability. Estimated count: 220 survivors requiring immediate rooftop extraction."},
+      {"step": 4, "agent": "medical_triage", "output": "Medical urgency: CRITICAL. Pre-positioning hypothermia blankets, trauma packs, and anti-venoms."},
+      {"step": 5, "agent": "priority_agent", "output": "Assigned highest dispatch rank: P1. Score: 0.95. Launch immediate response window of <10 minutes."},
+      {"step": 6, "agent": "resource_allocation", "output": "Allocated: 12 ambulances, 8 NDRF teams, 2 rescue choppers, 6 motorboats."},
+      {"step": 7, "agent": "hospital_coordination", "output": "Primary route: Gandhi Hospital (140 patients). Secondary route: Osmania Hospital (80 patients)."},
+      {"step": 8, "agent": "risk_prediction", "output": "Secondary hazards identified: Structural collapse of old structures, electrocution risk, and cholera risk."},
+      {"step": 9, "agent": "communication_agent", "output": "Drafted emergency cell broadcast, police command SMS, and hospital disaster team pages."},
+      {"step": 10, "agent": "command_orchestrator", "output": "RESCUE PLAN FINALIZED. P1 dispatch approved. Field commanders take control. Deploying active units now."}
+    ]
+  },
+  {
+    "id": "scenario-wgl-fire",
+    "title": "Warangal Industrial Fire",
+    "type": "fire",
+    "description": "Chemical storage tank fire at Hanamkonda Industrial area. Risk of toxic vapor cloud. 45 staff stranded in nearby administrative block.",
+    "location": "Industrial Area, Hanamkonda, Warangal",
+    "latitude": 17.9904,
+    "longitude": 79.5822,
+    "severity": 4,
+    "estimated_survivors": 45,
+    "rescue_plan": {
+      "priority": "P2",
+      "severity": 4,
+      "affected_area": "Hanamkonda Industrial Area, Warangal, Telangana",
+      "estimated_survivors": 45,
+      "survivor_probability": 0.82,
+      "priority_score": 0.81,
+      "confidence_score": 0.91,
+      "medical_priority": "high",
+      "dispatch_urgency": "immediate",
+      "recommended_hospital": "MGM Hospital Warangal",
+      "recommended_resources": [
+        {"type": "fire_truck", "count": 6, "eta_minutes": 5},
+        {"type": "ambulance", "count": 5, "eta_minutes": 7},
+        {"type": "rescue_team", "count": 3, "eta_minutes": 9},
+        {"type": "medical_unit", "count": 2, "eta_minutes": 10}
+      ],
+      "hospitals": [
+        {"name": "MGM Hospital Warangal", "distance_km": 1.9, "available_beds": 65, "patient_routing": 45}
+      ],
+      "alert_actions": {
+        "field_team": "FIRE COMBAT DISPATCH: 6 engines deploy to chemical site. NDRF team evacuate admin block wearing Hazmat gear.",
+        "hospital": "BURN HAZARD ALERT: MGM Hospital Warangal prepare for 45 toxic inhalation and thermal burn patients.",
+        "public": "SHELTER IN PLACE: Toxic chemical plume heading north. Close all windows and turn off AC units within 1km radius."
+      },
+      "risk_warnings": [
+        "High danger of BLEVE (Boiling Liquid Expanding Vapor Explosion)",
+        "Toxic chemical plume (sulfur dioxide) dispersion warning",
+        "Wind direction shifting north-east at 14 km/h"
+      ]
+    },
+    "agent_decisions": [
+      {"step": 1, "agent": "disaster_intelligence", "output": "Classified: CHEMICAL FIRE. Severity: 4/5. 500m exclusion zone established."},
+      {"step": 2, "agent": "incident_understanding", "output": "Class 3 flammables involved. Admin building trapped by heat corridor. 45 employees unaccounted for."},
+      {"step": 3, "agent": "survivor_probability", "output": "Calculated 82% survival chance. Estimated: 45 casualties trapped inside air-conditioned office block."},
+      {"step": 4, "agent": "medical_triage", "output": "Triage priority: HIGH. Focus on toxic fume inhalation, smoke asphyxia, and second-degree thermal burns."},
+      {"step": 5, "agent": "priority_agent", "output": "Assigned priority: P2. Score: 0.81. Response timeframe: 5 minutes."},
+      {"step": 6, "agent": "resource_allocation", "output": "Dispatched: 6 foam tenders, 5 ambulances, 3 Hazmat rescue teams, 2 mobile ICU triage units."},
+      {"step": 7, "agent": "hospital_coordination", "output": "Routed all 45 patients to MGM Hospital Warangal (nearest burns and toxicology specialty)."},
+      {"step": 8, "agent": "risk_prediction", "output": "Secondary hazards: Tank 4 structural failure, acid run-off into local waterways, vapor explosion."},
+      {"step": 9, "agent": "communication_agent", "output": "Sent localized Hazmat alert notifications to industrial park employees and community siren controls."},
+      {"step": 10, "agent": "command_orchestrator", "output": "RESCUE PLAN CONCLUDED. P2 containment and evacuation underway. Foam blankets being applied."}
+    ]
+  },
+  {
+    "id": "scenario-hwy-collapse",
+    "title": "Highway Bridge Collapse",
+    "type": "collapse",
+    "description": "Highway flyover deck collapse near Medchal Bypass. Multiple cars trapped underneath. Concrete debris blocking NH 44.",
+    "location": "Medchal Bypass, NH 44, Rangareddy",
+    "latitude": 17.6188,
+    "longitude": 78.4891,
+    "severity": 4,
+    "estimated_survivors": 30,
+    "rescue_plan": {
+      "priority": "P2",
+      "severity": 4,
+      "affected_area": "Medchal Bypass, NH 44, Telangana",
+      "estimated_survivors": 30,
+      "survivor_probability": 0.78,
+      "priority_score": 0.79,
+      "confidence_score": 0.87,
+      "medical_priority": "high",
+      "dispatch_urgency": "immediate",
+      "recommended_hospital": "Gandhi Hospital",
+      "recommended_resources": [
+        {"type": "rescue_team", "count": 5, "eta_minutes": 11},
+        {"type": "ambulance", "count": 6, "eta_minutes": 14},
+        {"type": "helicopter", "count": 1, "eta_minutes": 18}
+      ],
+      "hospitals": [
+        {"name": "Gandhi Hospital", "distance_km": 19.8, "available_beds": 120, "patient_routing": 25},
+        {"name": "Hitec City Emergency Hospital", "distance_km": 15.5, "available_beds": 20, "patient_routing": 5}
+      ],
+      "alert_actions": {
+        "field_team": "COLLAPSE RESCUE TEAM DISPATCH: Heavy search and rescue teams deploy to Medchal with concrete cutters and cameras.",
+        "hospital": "TRAUMA LEVEL 2: Gandhi Hospital prepare for crush syndrome cases. Hitec City hospital standby for overflow.",
+        "public": "TRAFFIC ALERT: NH 44 blocked at Medchal. Commuters diversion through Outer Ring Road Exit 6. Gridlock warning."
+      },
+      "risk_warnings": [
+        "Unstable adjacent bridge pillar structural collapse risk",
+        "Crush syndrome hazard for victims trapped over 2 hours",
+        "Severe traffic gridlock delaying second wave rescue units"
+      ]
+    },
+    "agent_decisions": [
+      {"step": 1, "agent": "disaster_intelligence", "output": "Classified: STRUCTURAL COLLAPSE. Severity: 4/5. 200m zone isolated."},
+      {"step": 2, "agent": "incident_understanding", "output": "60-meter concrete segment collapsed. 8 passenger cars confirmed crushed or trapped in the void."},
+      {"step": 3, "agent": "survivor_probability", "output": "Calculated 78% survivor probability based on void spaces. 30 victims estimated trapped."},
+      {"step": 4, "agent": "medical_triage", "output": "Triage Priority: HIGH. High probability of crush injuries, orthopedic trauma, internal bleeding."},
+      {"step": 5, "agent": "priority_agent", "output": "Priority: P2. Score: 0.79. Heavy rescue crane transit dispatch priority active."},
+      {"step": 6, "agent": "resource_allocation", "output": "Allocated: 5 specialized USAR teams with cutters/shoring, 6 trauma ambulances, 1 helicopter for critical evac."},
+      {"step": 7, "agent": "hospital_coordination", "output": "Primary: Gandhi Hospital (25 patients). Secondary: Hitec City Hospital (5 patients)."},
+      {"step": 8, "agent": "risk_prediction", "output": "Secondary dangers: Vibration from nearby rail line causing shifting debris, fuel leak, dust inhalation."},
+      {"step": 9, "agent": "communication_agent", "output": "Broadcasted road block warnings, highway diversions, and activated municipal heavy tow cranes."},
+      {"step": 10, "agent": "command_orchestrator", "output": "RESCUE PLAN CONCLUDED. Shoring operations started. Debris removal and search dogs in action."}
+    ]
+  }
+]
