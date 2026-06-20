@@ -3,6 +3,7 @@ RescueNet AI — Application Configuration
 Loads environment variables via Pydantic BaseSettings.
 """
 
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import List
 
@@ -49,10 +50,11 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.cors_origins.split(",")]
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    model_config = ConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
 
 settings = Settings()

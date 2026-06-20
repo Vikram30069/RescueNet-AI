@@ -340,7 +340,7 @@ def list_resources(
 
 def save_agent_decision(decision: Dict) -> None:
     decision["id"] = str(uuid.uuid4())
-    decision["created_at"] = datetime.utcnow().isoformat() + "Z"
+    decision["created_at"] = _now()
     _agent_decisions.append(decision)
 
 
@@ -369,8 +369,8 @@ def save_rescue_request(incident_id: str, plan: Dict) -> Dict:
         "incident_id": incident_id,
         "rescue_plan": plan,
         "status": "dispatched",
-        "dispatched_at": datetime.utcnow().isoformat() + "Z",
-        "created_at": datetime.utcnow().isoformat() + "Z",
+        "dispatched_at": _now(),
+        "created_at": _now(),
     }
     _rescue_requests[incident_id] = record
     return record
