@@ -46,14 +46,14 @@ _SEED_INCIDENTS = [
     },
     {
         "id": "demo-003",
-        "title": "Chemical Plant Fire — Pune",
-        "type": "fire",
-        "description": "Fire at chemical storage facility. Hazardous gas leak reported. 500m evacuation radius enforced.",
-        "location": "Pune, Maharashtra, India",
-        "latitude": 18.5204,
-        "longitude": 73.8567,
-        "severity": 3,
-        "status": "reported",
+        "title": "Hyderabad Flood Simulation",
+        "type": "flood",
+        "description": "Extreme 350mm rainfall in 12 hours. Musi River overflowing. Begumpet and Nampally residential zones severely flooded. 220+ stranded on rooftops.",
+        "location": "Begumpet, Hyderabad, Telangana, India",
+        "latitude": 17.4411,
+        "longitude": 78.4735,
+        "severity": 5,
+        "status": "active",
         "created_at": "2024-06-15T09:00:00Z",
     },
     {
@@ -558,3 +558,74 @@ def save_rescue_request(incident_id: str, plan: Dict) -> Dict:
 
 def get_rescue_request(incident_id: str) -> Optional[Dict]:
     return _rescue_requests.get(incident_id)
+
+
+# ===========================
+# Voice Call repository
+# ===========================
+
+_voice_calls: List[Dict] = []
+
+def create_voice_call(phone: str, incident_id: str, status: str = "queued") -> Dict:
+    call_id = str(uuid.uuid4())
+    record = {
+        "id": call_id,
+        "phone": phone,
+        "incident_id": incident_id,
+        "status": status,
+        "digits": None,
+        "safety_status": "unknown",
+        "created_at": _now(),
+        "updated_at": _now(),
+    }
+    _voice_calls.append(record)
+    return record
+
+def get_voice_calls(incident_id: Optional[str] = None) -> List[Dict]:
+    if incident_id:
+        return [c for c in _voice_calls if c.get("incident_id") == incident_id]
+    return _voice_calls
+
+def get_voice_call(call_id: str) -> Optional[Dict]:
+    for c in _voice_calls:
+        if c["id"] == call_id:
+            return c
+    return None
+
+def update_voice_call(
+    call_id: str,
+    status: Optional[str] = None,
+    digits: Optional[str] = None,
+    safety_status: Optional[str] = None,
+    **extra_fields,
+) -> Optional[Dict]:
+    for c in _voice_calls:
+        if c["id"] == call_id:
+            if status is not None:
+                c["status"] = status
+            if digits is not None:
+                c["digits"] = digits
+            if safety_status is not None:
+                c["safety_status"] = safety_status
+            for key, value in extra_fields.items():
+                c[key] = value
+            c["updated_at"] = _now()
+            
+            # Real-time simulation feedback: if safety status changes, escalate incident details
+            phone = c.get("phone", "unknown")
+            if safety_status == "trapped":
+                inc = get_incident(c["incident_id"])
+                if inc:
+                    inc["severity"] = min(5, inc.get("severity", 3) + 1)
+                    if "Voice Assessment Alert: Survivor at" not in inc.get("description", ""):
+                        inc["description"] = (inc.get("description", "") + 
+                                              f" [Voice Assessment Alert: Survivor at {phone} reported TRAPPED.]")
+            elif safety_status == "critical":
+                inc = get_incident(c["incident_id"])
+                if inc:
+                    inc["severity"] = 5
+                    if "Voice Assessment Alert: Survivor at" not in inc.get("description", ""):
+                        inc["description"] = (inc.get("description", "") + 
+                                              f" [Voice Assessment Alert: Survivor at {phone} reported CRITICAL MEDICAL EMERGENCY.]")
+            return c
+    return None

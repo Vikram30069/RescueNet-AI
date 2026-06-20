@@ -39,7 +39,11 @@ async def register_responder(payload: ResponderRegisterRequest):
     record = responder_db.register_responder(payload.dict())
     return {
         "success": True,
-        "message": f"Responder '{record['name']}' registered. You will receive WhatsApp dispatch alerts on {record['phone']}.",
+        "message": (
+            f"Responder '{record['name']}' registered for WhatsApp dispatch alerts on "
+            f"{record['whatsapp']}. If using the Twilio Sandbox sender, this phone must join "
+            "the sandbox before real delivery works."
+        ),
         "responder": record,
     }
 

@@ -48,7 +48,7 @@ api=1&query=Gowliguda+Fire+Station+Hyderabad+Telangana,【40†L30-
 L34】,UNVERIFIED,LOW
 (Fields with empty values were not available or could not be verified. All phone numbers are from the official
 Telangana Fire Services site【20†L85-L92】【24†L95-L103】. Addresses are from public directories.)
-Quality Control Summary
+Quality Control Summa
 • Records found: ~150 fire stations across Telangana (names from official “Know Your Fire Station” list
 and Station Officers directory).
 • Verified records: All phone numbers above are from the official Telangana Fire Services directory

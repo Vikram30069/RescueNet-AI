@@ -3,9 +3,20 @@ RescueNet AI — Application Configuration
 Loads environment variables via Pydantic BaseSettings.
 """
 
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = BACKEND_DIR.parent
+
+load_dotenv(PROJECT_ROOT / ".env")
+load_dotenv(BACKEND_DIR / ".env", override=True)
+
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import List
+
 
 
 class Settings(BaseSettings):

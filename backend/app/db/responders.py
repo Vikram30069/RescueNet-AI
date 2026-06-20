@@ -4,6 +4,7 @@ Stores registered first responders (ambulance drivers, fire teams, NDRF, etc.)
 Replace with PostgreSQL table when DB is connected.
 """
 
+import re
 import uuid
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
@@ -18,17 +19,49 @@ def _now() -> str:
 _responders: Dict[str, Dict] = {}
 
 
+def normalize_india_whatsapp(phone: str) -> Dict[str, str]:
+    """Normalize local responder phone input to Twilio WhatsApp E.164 format."""
+    raw_phone = (phone or "").strip()
+    cleaned = re.sub(r"[\s\-().]", "", raw_phone)
+
+    if cleaned.startswith("whatsapp:"):
+        cleaned = cleaned.replace("whatsapp:", "", 1)
+
+    if cleaned.startswith("00"):
+        cleaned = f"+{cleaned[2:]}"
+
+    digits_only = re.sub(r"\D", "", cleaned)
+    if cleaned.startswith("+"):
+        e164 = cleaned
+        display_phone = cleaned
+    elif digits_only.startswith("91") and len(digits_only) == 12:
+        e164 = f"+{digits_only}"
+        display_phone = digits_only[-10:]
+    elif len(digits_only) == 10:
+        e164 = f"+91{digits_only}"
+        display_phone = digits_only
+    else:
+        e164 = f"+{digits_only}" if digits_only else ""
+        display_phone = digits_only or raw_phone
+
+    return {
+        "phone": display_phone,
+        "e164": e164,
+        "whatsapp": f"whatsapp:{e164}" if e164 else "",
+    }
+
+
 # ===========================
 # Seed a default demo responder
 # ===========================
 def _seed_demo_responder():
     demo = {
         "id": "resp-demo-001",
-        "name": "Demo Responder (Ambulance)",
+        "name": "Demo Responder (All-Rounder)",
         "phone": "6304589007",
         "whatsapp": "whatsapp:+916304589007",
-        "asset_types": ["ambulance"],
-        "district": "Hyderabad",
+        "asset_types": ["ambulance", "fire_truck", "ndrf_team", "medical_helicopter", "police", "search_and_rescue"],
+        "district": "",  # Empty district matches all locations
         "status": "available",
         "registered_at": _now(),
     }
@@ -43,20 +76,13 @@ _seed_demo_responder()
 
 def register_responder(data: Dict) -> Dict:
     resp_id = str(uuid.uuid4())
-    phone = data.get("phone", "").strip().replace(" ", "").replace("-", "")
-    # Normalize to E.164 for India if 10 digits
-    if phone.isdigit() and len(phone) == 10:
-        whatsapp_num = f"whatsapp:+91{phone}"
-    elif phone.startswith("+"):
-        whatsapp_num = f"whatsapp:{phone}"
-    else:
-        whatsapp_num = f"whatsapp:+{phone}"
+    phone_info = normalize_india_whatsapp(data.get("phone", ""))
 
     record = {
         "id": resp_id,
         "name": data.get("name", "Unknown"),
-        "phone": phone,
-        "whatsapp": whatsapp_num,
+        "phone": phone_info["phone"],
+        "whatsapp": phone_info["whatsapp"],
         "asset_types": data.get("asset_types", []),
         "district": data.get("district", ""),
         "status": "available",

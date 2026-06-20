@@ -6,9 +6,18 @@ Gracefully degrades to console logging if Twilio credentials are not configured.
 
 import os
 import logging
+from pathlib import Path
 from typing import Dict, List
 
+from dotenv import load_dotenv
+
 logger = logging.getLogger("rescuenet.notifications")
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = BACKEND_DIR.parent
+
+load_dotenv(PROJECT_ROOT / ".env")
+load_dotenv(BACKEND_DIR / ".env", override=True)
 
 # ===========================
 # Twilio setup (optional)
@@ -16,12 +25,14 @@ logger = logging.getLogger("rescuenet.notifications")
 
 _twilio_client = None
 _twilio_from = None
+_twilio_uses_sandbox = False
 
 def _init_twilio():
-    global _twilio_client, _twilio_from
+    global _twilio_client, _twilio_from, _twilio_uses_sandbox
     account_sid = os.getenv("TWILIO_ACCOUNT_SID", "")
     auth_token = os.getenv("TWILIO_AUTH_TOKEN", "")
     _twilio_from = os.getenv("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
+    _twilio_uses_sandbox = _twilio_from == "whatsapp:+14155238886"
 
     if account_sid and auth_token and not account_sid.startswith("AC_REPLACE"):
         try:
@@ -153,6 +164,14 @@ def _send_whatsapp(to: str, message: str, responder: Dict) -> Dict:
         "message_preview": message[:120] + "...",
     }
 
+    if not to or not to.startswith("whatsapp:+"):
+        logger.error(f"Invalid WhatsApp recipient address for responder {responder.get('id')}: {to}")
+        return {
+            **base_result,
+            "status": "failed",
+            "error": "Invalid WhatsApp recipient. Expected whatsapp:+<countrycode><number>.",
+        }
+
     if _twilio_client and _twilio_from:
         try:
             msg = _twilio_client.messages.create(
@@ -160,7 +179,22 @@ def _send_whatsapp(to: str, message: str, responder: Dict) -> Dict:
                 from_=_twilio_from,
                 to=to,
             )
-            return {**base_result, "status": "sent", "sid": msg.sid}
+            status = getattr(msg, "status", None) or "queued"
+            result = {
+                **base_result,
+                "status": status,
+                "sid": msg.sid,
+                "twilio_status": status,
+                "twilio_error_code": getattr(msg, "error_code", None),
+                "twilio_error_message": getattr(msg, "error_message", None),
+            }
+            if _twilio_uses_sandbox:
+                result["delivery_note"] = (
+                    "Twilio accepted the WhatsApp message. Sandbox recipients must first join "
+                    "your Twilio WhatsApp Sandbox from their phone before messages are delivered."
+                )
+            logger.info(f"Twilio WhatsApp message created for {to}: sid={msg.sid}, status={status}")
+            return result
         except Exception as e:
             logger.error(f"Twilio error for {to}: {e}")
             return {**base_result, "status": "failed", "error": str(e)}

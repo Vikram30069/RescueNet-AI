@@ -2,13 +2,282 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --background: #0a0f1e;
-  --foreground: #e2e8f0;
+  --bg-deepest: #060a13;
+  --bg-dark: #080d1a;
+  --bg-card: #0b1220;
+  --bg-card2: #0d1527;
+  --bg-card3: #111827;
+  --border: #1e293b;
+  --border2: #334155;
+  --blue: #3b82f6;
+  --blue-bright: #60a5fa;
+  --red: #ef4444;
+  --orange: #f97316;
+  --green: #10b981;
+  --green-bright: #34d399;
+  --purple: #a855f7;
+  --yellow: #fbbf24;
+  --cyan: #06b6d4;
+  --teal: #14b8a6;
+  --text: #f8fafc;
+  --text2: #cbd5e1;
+  --text3: #94a3b8;
+  --text4: #64748b;
+  --text5: #475569;
 }
 
+/* ─── Reset & Base ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { height: 100%; scroll-behavior: smooth; }
+
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, sans-serif;
+  margin: 0; padding: 0;
+  background: var(--bg-deepest);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  height: 100%; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* ─── Input/Select Reset ────────────────────────────────────────────────────── */
+input, select, textarea {
+  outline: none; -webkit-appearance: none;
+  font-family: inherit;
+}
+select option { background: #0b1220; color: #f8fafc; }
+button { user-select: none; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes blinkDot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+@keyframes pulseRing {
+  0%   { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+@keyframes glowRed {
+  0%, 100% { box-shadow: 0 0 6px rgba(239,68,68,0.4), 0 0 12px rgba(239,68,68,0.2); }
+  50%       { box-shadow: 0 0 14px rgba(239,68,68,0.8), 0 0 28px rgba(239,68,68,0.4); }
+}
+@keyframes glowBlue {
+  0%, 100% { box-shadow: 0 0 5px rgba(59,130,246,0.3); }
+  50%       { box-shadow: 0 0 14px rgba(59,130,246,0.7); }
+}
+@keyframes glowGreen {
+  0%, 100% { box-shadow: 0 0 5px rgba(16,185,129,0.3); }
+  50%       { box-shadow: 0 0 14px rgba(16,185,129,0.7); }
+}
+@keyframes tickerScroll {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-200%); }
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scaleY(1); }
+  20%       { transform: scaleY(2.5); }
+  40%       { transform: scaleY(0.6); }
+  60%       { transform: scaleY(1.8); }
+  80%       { transform: scaleY(0.8); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes progressBar {
+  from { width: 0%; }
+  to   { width: var(--target-width, 100%); }
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+}
+
+/* ─── Animation Utility Classes ─────────────────────────────────────────────── */
+.anim-fadeIn      { animation: fadeIn 0.4s ease-out forwards; }
+.anim-fadeInLeft  { animation: fadeInLeft 0.35s ease-out forwards; }
+.anim-fadeInRight { animation: fadeInRight 0.35s ease-out forwards; }
+.anim-slideUp     { animation: slideUp 0.4s ease-out forwards; }
+.anim-scaleIn     { animation: scaleIn 0.3s ease-out forwards; }
+.anim-blink       { animation: blinkDot 1.2s ease-in-out infinite; }
+.anim-glow-red    { animation: glowRed 2s ease-in-out infinite; }
+.anim-glow-blue   { animation: glowBlue 2s ease-in-out infinite; }
+.anim-glow-green  { animation: glowGreen 2s ease-in-out infinite; }
+.anim-ticker      { animation: tickerScroll 35s linear infinite; }
+.anim-heartbeat   { animation: heartbeat 1.5s ease-in-out infinite; }
+.anim-spin        { animation: rotateSlow 3s linear infinite; }
+
+/* ─── Glass Morphism ─────────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(11, 18, 32, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.9);
+}
+.glass-light {
+  background: rgba(13, 21, 39, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+/* ─── Pulse dot (status indicator) ──────────────────────────────────────────── */
+.pulse-dot {
+  position: relative;
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulseRing 1.8s ease-out infinite;
+}
+
+/* ─── Leaflet Dark Override ──────────────────────────────────────────────────── */
+.leaflet-container { background: #060a13 !important; }
+.leaflet-popup-content-wrapper {
+  background: #0b1220 !important;
+  color: #f8fafc !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+}
+.leaflet-popup-tip { background: #0b1220 !important; }
+.leaflet-popup-content { font-family: 'Inter', system-ui; font-size: 12px; }
+.leaflet-control-attribution { 
+  background: rgba(6, 10, 19, 0.8) !important; 
+  color: #475569 !important; 
+  font-size: 9px !important;
+}
+.leaflet-bar a { background: #0b1220 !important; color: #94a3b8 !important; border-color: #1e293b !important; }
+.leaflet-bar a:hover { background: #0d1527 !important; color: #f8fafc !important; }
+
+/* ─── Severity Badge ─────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+
+/* ─── Card hover ─────────────────────────────────────────────────────────────── */
+.card-hover {
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.card-hover:hover {
+  border-color: #334155 !important;
+  transform: translateY(-1px);
+  background: #0f1a2e !important;
+}
+
+/* ─── Progress bar ───────────────────────────────────────────────────────────── */
+.progress-bar {
+  animation: progressBar 0.8s ease-out forwards;
+}
+
+/* ─── Rain forecast bar ──────────────────────────────────────────────────────── */
+.rain-bar {
+  transition: height 0.5s ease;
+}
+
+/* ─── Phone frame ────────────────────────────────────────────────────────────── */
+.phone-frame {
+  position: relative;
+  width: 375px;
+  height: 780px;
+  background: #111827;
+  border-radius: 48px;
+  border: 8px solid #1f2937;
+  box-shadow:
+    0 0 0 2px #111827,
+    0 0 0 4px #374151,
+    0 40px 80px rgba(0,0,0,0.8),
+    inset 0 0 20px rgba(0,0,0,0.5);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.phone-notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 28px;
+  background: #111827;
+  border-radius: 0 0 20px 20px;
+  z-index: 10;
+}
+.phone-screen {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  border-radius: 40px;
+  background: #0a0f1e;
+}
+.phone-home-indicator {
+  position: absolute;
+  bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 5px;
+  background: #374151;
+  border-radius: 3px;
+}
+
+/* ─── SOS Button ─────────────────────────────────────────────────────────────── */
+.sos-btn {
+  background: #ef4444;
+  border-radius: 50%;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900;
+  color: white; border: none; cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(239,68,68,0.2), 0 0 15px rgba(239,68,68,0.5);
+  transition: all 0.2s;
+}
+.sos-btn:hover {
+  box-shadow: 0 0 0 6px rgba(239,68,68,0.3), 0 0 25px rgba(239,68,68,0.7);
+  transform: scale(1.05);
+}
+
+/* ─── Confetti ───────────────────────────────────────────────────────────────── */
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 14px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
 }
