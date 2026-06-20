@@ -6,6 +6,8 @@ Replace with Supabase client or SQLAlchemy when connecting a real database.
 """
 
 import uuid
+import csv
+import os
 from datetime import datetime, timezone
 
 def _now() -> str:
@@ -373,10 +375,57 @@ def _seed() -> None:
     """Load inline seed data into in-memory stores on module load."""
     for item in _SEED_INCIDENTS:
         _incidents[item["id"]] = item
-    for item in _SEED_HOSPITALS:
-        _hospitals[item["id"]] = item
-    for item in _SEED_RESOURCES:
-        _resources[item["id"]] = item
+        
+    csv_path = os.path.join(os.path.dirname(__file__), "../../../emergency_assets_master.csv")
+    if os.path.exists(csv_path):
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # Provide defaults for missing coordinates
+                try:
+                    lat = float(row['latitude']) if row['latitude'] else 0.0
+                    lon = float(row['longitude']) if row['longitude'] else 0.0
+                except ValueError:
+                    lat, lon = 0.0, 0.0
+
+                if row['asset_type'] == 'Hospital':
+                    hosp = {
+                        "id": row['id'],
+                        "name": row['name'],
+                        "address": row['address'],
+                        "city": row['district'],
+                        "latitude": lat,
+                        "longitude": lon,
+                        "total_beds": 500,
+                        "available_beds": 100,
+                        "icu_beds": 20,
+                        "trauma_unit": True,
+                        "burn_unit": False,
+                        "blood_bank": True,
+                        "specializations": ["trauma"],
+                        "contact_phone": row['phone'] or row['alternate_phone'],
+                        "is_active": True,
+                    }
+                    _hospitals[hosp["id"]] = hosp
+                else:
+                    rtype = row['asset_type'].lower().replace(' ', '_')
+                    reso = {
+                        "id": row['id'],
+                        "name": row['name'],
+                        "type": rtype,
+                        "quantity": 10,
+                        "available": 8,
+                        "location": row['address'],
+                        "latitude": lat,
+                        "longitude": lon,
+                        "status": "available",
+                    }
+                    _resources[reso["id"]] = reso
+    else:
+        for item in _SEED_HOSPITALS:
+            _hospitals[item["id"]] = item
+        for item in _SEED_RESOURCES:
+            _resources[item["id"]] = item
 
 
 # Auto-seed on import

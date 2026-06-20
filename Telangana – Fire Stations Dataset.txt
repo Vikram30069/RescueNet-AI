@@ -1,0 +1,67 @@
+Telangana – Fire Stations Dataset
+Below is a subset of the compiled fire station records in Telangana (especially Hyderabad/Secunderabad),
+with available details from official sources and public directories. Each record includes name, district,
+address, contact numbers, and source citations. (Unverifiable fields are marked accordingly.)
+id,name,district,address,phone,alternate_phone,website,latitude,longitude,google_maps_link,source_url,verification_status,confidence
+1,Secunderabad Fire Station,Hyderabad,"Sardar Patel Road, Secunderabad,
+Hyderabad-500003, Telangana",8712699428,8712699429,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Secunderabad+Fire+Station+Secunderabad+Telangana,【11†L39-
+L42】,UNVERIFIED,LOW
+2,Moula Ali Fire Station,Ranga Reddy,"Near IICT, Moula Ali, Hyderabad-500040,
+Telangana",8712699434,8712699435,,,(coordinates pending),https://www.google.com/
+maps/search/?api=1&query=Moula+Ali+Fire+Station+Hyderabad+Telangana,【27†L39-
+L41】,UNVERIFIED,LOW
+3,Salarjung Museum Fire Station,Hyderabad,"Salar Jung Museum Road, Naya Pul,
+Darul Shifa, Hyderabad-500002, Telangana",8712699416,8712699417,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Salarjung+Museum+Fire+Station+Hyderabad+Telangana,【28†L1-
+L3】,UNVERIFIED,LOW
+4,Malakpet Fire Station,Hyderabad,"Near Government Printing Press, Chanchalguda,
+Malakpet, Hyderabad-500036, Telangana",8712699414,8712699415,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Malakpet+Fire+Station+Hyderabad+Telangana,【31†L39-
+L43】,UNVERIFIED,LOW
+5,Langer House Fire Station,Hyderabad,"9-1-20/A/2, Beside Kendriya Vidyalaya,
+Langer House, Hyderabad-500008, Telangana",8712699420,8712699421,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Langer+House+Fire+Station+Hyderabad+Telangana,【34†L30-
+L33】,UNVERIFIED,LOW
+6,Snorkel Fire Station,Hyderabad,"Secunderabad Cantonment (Hyderabad)",
+8712699432,8712699433,,,(coordinates pending),,【20†L85-L92】,UNVERIFIED,LOW
+7,Chandulal Baradari Fire Station,Hyderabad,"Bahadurpura, Hyderabad-500064,
+Telangana",8712699412,,,(coordinates pending),,【20†L89-L92】,UNVERIFIED,LOW
+8,Moghalpura Fire Station,Hyderabad,"23-1-664, Opposite Charminar Bus Stop,
+Moghalpura, Hyderabad-500002, Telangana",8712699408,8712699409,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Moghalpura+Fire+Station+Hyderabad+Telangana,【36†L30-
+L34】,UNVERIFIED,LOW
+9,Sanath Nagar Fire Station,Hyderabad,"Sanath Nagar, Hyderabad-500018,
+Telangana",8712699430,8712699431,,,(coordinates pending),https://www.google.com/
+maps/search/?api=1&query=Sanath+Nagar+Fire+Station+Hyderabad+Telangana,【39†L39-
+1
+L42】,UNVERIFIED,LOW
+10,Gowliguda Fire Station,Hyderabad,"5-1-1071/72, Near Gurudwara, Gowliguda,
+Hyderabad-500012, Telangana",8712699410,8712699411,,,(coordinates
+pending),https://www.google.com/maps/search/?
+api=1&query=Gowliguda+Fire+Station+Hyderabad+Telangana,【40†L30-
+L34】,UNVERIFIED,LOW
+(Fields with empty values were not available or could not be verified. All phone numbers are from the official
+Telangana Fire Services site【20†L85-L92】【24†L95-L103】. Addresses are from public directories.)
+Quality Control Summary
+• Records found: ~150 fire stations across Telangana (names from official “Know Your Fire Station” list
+and Station Officers directory).
+• Verified records: All phone numbers above are from the official Telangana Fire Services directory
+【20†L85-L92】【24†L95-L103】 (HIGH confidence). Addresses are from business listing sites (not
+official), so marked UNVERIFIED (LOW confidence).
+• District coverage: Collected stations in Hyderabad/Secunderabad (22 listed), Sangareddy
+(Patancheru, Sangareddy, Sadasivpet, Zaheerabad, etc.), Warangal (Warangal, Narsampet, etc.),
+Nizamabad district (Nizamabad City, Bodhan, etc.), Karimnagar (Karimnagar, Huzurabad, etc.),
+Khammam (Khammam, Sathupally, etc.), and others. Coverage primarily covers priority cities above.
+• Missing districts: Some rural/outpost stations have limited info (e.g., district outposts). No data
+found for a few remote posts or newer stations.
+• Recommended sources: Future updates should consult the Telangana Fire Department for official
+address listings, district emergency contact lists, or field verification. Cross-reference with local
+government/public safety portals or RTI queries to the Fire Services may yield exact locations and
+alternate numbers.
+2

@@ -1,0 +1,44 @@
+Telangana Blood Banks Dataset
+We identified five verified blood bank entries in the focus districts from the Indian Red Cross Society (IRCS)
+official listings【41†L386-L389】. These include the IRCS blood centers in Bhadrachalam (Bhadradri
+Kothagudem district), Hanumakonda (Warangal district), Karimnagar, Nizamabad, and Hyderabad
+(Vidyanagar)【41†L386-L389】. All entries are categorized as “Blood Banks” and sourced directly from the
+IRCS Blood Centre directory. The IRCS page provides full address details and official contact numbers, which
+we use here without modification【41†L386-L389】.
+id,name,district,address,phone,alternate_phone,website,latitude,longitude,google_maps_link,source_url,verification_status,confidence
+1,IRCS Blood Centre Bhadrachalam,Bhadradri Kothagudem,"9-1-18/4, Flood Shelter,
+Kunavaram Road, Medical Colony, Bhadrachalam, Telangana 507111",
+9494728027,, , , , ,https://www.indianredcross.org/ircs/
+ircsbloodbanks/,Verified,HIGH
+2,IRCS Blood Centre Hanumakonda,Warangal,"2-7-941, Opposite District
+Collectorate, Subedari, Hanumakonda, Telangana 506001",
+8247314427,08702456765, , , , ,https://www.indianredcross.org/ircs/
+ircsbloodbanks/,Verified,HIGH
+3,IRCS Blood Centre Karimnagar,Karimnagar,"4-1-22, Near SBI Main Branch,
+Osmanpura, Karimnagar, Telangana 505001",9949518963,08782970077, , , , ,https://
+www.indianredcross.org/ircs/ircsbloodbanks/,Verified,HIGH
+4,IRCS Blood Centre Nizamabad,Nizamabad,"#5-5-8/1, Behind MRO Office
+Khaleelwadi, Nizamabad, Telangana 503001",8688887004,, , , , ,https://
+www.indianredcross.org/ircs/ircsbloodbanks/,Verified,HIGH
+5,Red Cross Blood Centre Vidyanagar,Hyderabad,"#1-9-310, Vidyanagar, Street No.
+14, Achyuthreddy Marg, Hyderabad, Telangana 500044",
+7032888001,04027633087, , , , ,https://www.indianredcross.org/ircs/
+ircsbloodbanks/,Verified,HIGH
+Quality Control
+• Total records found: 5 (all for focus districts plus one adjacent district).
+• Verified records: 5 (100%), all entries sourced from the official IRCS blood center directory
+【41†L386-L389】.
+• Unverified records: 0. None needed, since all data came from the IRCS official list.
+• District coverage: Included districts – Hyderabad (1), Nizamabad (1), Karimnagar (1),
+Hanumakonda/Warangal (1), Bhadradri Kothagudem (Bhadrachalam) (1).
+• Missing districts: No entry from Sangareddy or Secunderabad (none listed in IRCS for these).
+Nalgonda and other districts have IRCS centres but were outside the initial focus list.
+• Data quality issues: Addresses and contacts are from the IRCS page and are considered
+authoritative. Latitude/longitude and Google Maps links are omitted (not directly available from the
+1
+source). No alternate phone or website was provided except as noted. All fields left blank where not
+in source.
+• Recommended additional sources: For completeness, consult the state Blood Bank registry (e.g., e-
+Raktkosh), state health department listings or hospital blood bank directories, and district health
+department sites. However, the IRCS directory covers primary public blood centers.
+2

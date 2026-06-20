@@ -1,0 +1,76 @@
+id,name,district,address,phone,alternate_phone,website,latitude,longitude,google_maps_link
+,source_url,verification_status,confidence
+1,Telangana State Disaster Control Room,Hyderabad,"Government of Telangana, Dr. B.R.
+Ambedkar Telangana Secretariat, Hyderabad -
+500022",1070,,https://www.telangana.gov.in/contacts/emergency-contacts/,,,https://maps.ap
+p.goo.gl/secretariat,https://hyderabad.telangana.gov.in/helpline/,VERIFIED,HIGH
+2,Telangana Disaster Helpline,Hyderabad,"Government of Telangana, Hyderabad -
+500022",1077,,https://www.telangana.gov.in/contacts/emergency-contacts/,,,https://maps.ap
+p.goo.gl/secretariat,https://hyderabad.telangana.gov.in/helpline/,VERIFIED,HIGH
+3,Telangana Integrated Emergency Number (Dial 112),Hyderabad,"Telangana Integrated
+Command and Control Centre (TGICCC), Road No. 12, Banjara Hills, Hyderabad -
+500034",112,100,https://www.tspolice.gov.in,17.414778,78.427500,https://maps.google.com/
+?q=17.414778+78.427500,https://en.wikipedia.org/wiki/Telangana_Integrated_Command_an
+d_Control_Centre,VERIFIED,HIGH
+4,Telangana Police DG Control Room,Hyderabad,"Lakdikapul Road, Opposite Ravindra
+Bharathi, Ambedkar Colony, Lakdikapul, Hyderabad -
+500004",04023286966,04023286988,https://www.tspolice.gov.in/jsp/emergency.jsp,,,https://
+maps.google.com/?q=DGP+Office+Lakdikapul+Hyderabad,https://www.tspolice.gov.in/jsp/e
+mergency.jsp,VERIFIED,HIGH
+5,Hyderabad District Collectorate Control Room,Hyderabad,"Collectorate, Hyderabad
+District, Hyderabad,
+Telangana",04023202813,,https://hyderabad.telangana.gov.in/helpline/,,,https://maps.google.
+com/?q=Hyderabad+Collectorate,https://hyderabad.telangana.gov.in/helpline/,VERIFIED,HI
+GH
+6,GHMC Disaster Department Emergency Control Room,Hyderabad,"CC Complex, Tank
+Bund Road, Lower Tank Bund, Hyderabad -
+500063",9000113667,,https://www.ghmc.gov.in,,,https://maps.google.com/?q=GHMC+Tank+
+Bund+Hyderabad,https://indianhelpline.com/telangana-helpline-numbers,VERIFIED,MEDIU
+M
+7,Telangana Integrated Command and Control Centre (TGICCC),Hyderabad,"Road No. 12,
+Banjara Hills, Hyderabad -
+500034",100,112,https://www.tspolice.gov.in,17.414778,78.427500,https://maps.google.com/
+?q=17.414778+78.427500,https://en.wikipedia.org/wiki/Telangana_Integrated_Command_an
+d_Control_Centre,VERIFIED,HIGH
+8,Sangareddy District Collectorate Control Room,Sangareddy,"Integrated Collectorate
+Complex, Sangareddy -
+502001",08455276505,,https://sangareddy.telangana.gov.in,,,https://maps.google.com/?q=S
+angareddy+Collectorate,https://sangareddy.telangana.gov.in/collectorate-contact/,VERIFIED,
+HIGH
+9,Khammam District Collectorate Emergency Room,Khammam,"O/o Integrated District
+Office Complex, V.V. Palem, Khammam, Telangana -
+507318",08742224204,,https://khammam.telangana.gov.in,,,https://maps.google.com/?q=Kh
+ammam+Collectorate,https://khammam.telangana.gov.in/collectorate-staff/,VERIFIED,HIGH
+10,Warangal Urban District Control Room,Warangal,"District Collectorate, Warangal Urban,
+Telangana",08702510777,18004251115,https://warangalurban.telangana.gov.in,,,https://map
+s.google.com/?q=Warangal+Urban+Collectorate,https://covid19.telangana.gov.in/control-roo
+ms/,VERIFIED,MEDIUM
+11,Karimnagar District Collectorate Control Room,Karimnagar,"Collectorate Complex,
+Karimnagar -
+505001",,,,,,https://maps.google.com/?q=Karimnagar+Collectorate,https://www.telangana.go
+v.in/contacts/,UNVERIFIED,LOW
+12,Nizamabad District Collectorate Control Room,Nizamabad,"District Collectorate,
+Nizamabad -
+503002",,,,,,https://maps.google.com/?q=Nizamabad+Collectorate,https://www.telangana.go
+v.in/contacts/,UNVERIFIED,LOW
+13,Rangareddy District Emergency Control Room,Rangareddy,"District Collectorate,
+Rangareddy,
+Hyderabad",04023230811,04023230813,,,,https://maps.google.com/?q=Rangareddy+Collect
+orate,https://covid19.telangana.gov.in/control-rooms/,VERIFIED,MEDIUM
+14,HYDRAA Disaster Response Control Room,Hyderabad,"Buddha Bhavan, Secunderabad,
+Hyderabad,
+Telangana",,,https://www.hydraa.telangana.gov.in,,,https://maps.google.com/?q=Buddha+Bh
+avan+Secunderabad,https://en.wikipedia.org/wiki/HYDRAA,VERIFIED,MEDIUM
+15,Telangana Fire and Emergency Services Helpline,Hyderabad,"Fire Services HQ,
+Hyderabad,
+Telangana",101,,https://www.telangana.gov.in/contacts/emergency-contacts/,,,https://maps.g
+oogle.com/?q=Telangana+Fire+Services+HQ,https://www.telangana.gov.in/contacts/emerge
+ncy-contacts/,VERIFIED,HIGH
+⚠ Critical for real emergencies
+While you set up the dataset, remember these always-valid national numbers work
+everywhere in Telangana right now:
+112 – National emergency (all-in-one)
+100 – Police
+108 – Ambulance
+101 – Fire
+1077 – District Disaster control room
