@@ -225,8 +225,6 @@ JWT auth and user roles are not yet implemented.
 
 | Warning | Location | Severity |
 |---|---|---|
-| `PydanticDeprecatedSince20` — use `ConfigDict` instead of class-based config | `app/core/config.py:10` | Low |
-| `datetime.utcnow()` is deprecated — use `datetime.now(datetime.UTC)` | `app/db/mock_db.py:343,372,373` | Low |
 | Next.js 14.2.3 has known security vulnerability | `package.json` | Medium — upgrade to latest Next.js |
 | 8 npm vulnerabilities (1 moderate, 6 high, 1 critical) | Frontend deps | Medium — run `npm audit fix` |
 
@@ -251,8 +249,6 @@ pip install crewai>=0.55.0 crewai-tools>=0.8.0 \
 | 🔴 HIGH | Re-run `pip install -r requirements.txt` when network is stable to install crewAI |
 | 🔴 HIGH | Set `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` in `.env` to enable real AI agents |
 | 🟠 MEDIUM | Set up PostgreSQL locally, run `database/schema.sql` + `seed/seed.sql` |
-| 🟠 MEDIUM | Fix Pydantic `ConfigDict` warning in `app/core/config.py` |
-| 🟠 MEDIUM | Fix `datetime.utcnow()` deprecation in `app/db/mock_db.py` |
 | 🟡 LOW | Upgrade Next.js from `14.2.3` to latest (`15.x`) and run `npm audit fix` |
 | 🟡 LOW | Add Google Maps API key for the map panel |
 | 🟡 LOW | Implement JWT authentication for API endpoints |
