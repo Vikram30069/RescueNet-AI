@@ -41,6 +41,16 @@ def run_crew(incident: Dict[str, Any]) -> Dict:
             "status": "mock",
         })
 
+    # Dispatch WhatsApp notifications to registered first responders
+    try:
+        from app.services import notification_service
+        notifications = notification_service.notify_responders(incident, result["rescue_plan"])
+        result["notifications_sent"] = notifications
+    except Exception as e:
+        import logging
+        logging.getLogger("rescuenet").warning(f"Notification dispatch failed: {e}")
+        result["notifications_sent"] = []
+
     return result
 
 

@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import health, incidents, agents, hospitals, resources
+from app.routers import health, incidents, agents, hospitals, resources, responders
 
 
 @asynccontextmanager
@@ -52,3 +52,4 @@ app.include_router(incidents.router, prefix="/api/v1", tags=["Incidents"])
 app.include_router(agents.router, prefix="/api/v1", tags=["Agents"])
 app.include_router(hospitals.router, prefix="/api/v1", tags=["Hospitals & Rescue Plans"])
 app.include_router(resources.router, prefix="/api/v1", tags=["Resources"])
+app.include_router(responders.router, prefix="/api/v1", tags=["Responders"])

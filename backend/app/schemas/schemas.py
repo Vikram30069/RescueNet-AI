@@ -199,6 +199,7 @@ class AgentExecuteResponse(BaseModel):
     status: str
     rescue_plan: RescuePlan
     agent_decisions: List[AgentDecisionSummary]
+    notifications_sent: List[Dict[str, Any]] = []
 
 
 # ===========================

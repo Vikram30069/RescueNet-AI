@@ -158,9 +158,19 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<"plan" | "agents">("plan");
 
   // What-If Simulator Variables
-  const [floodIntensity, setFloodIntensity] = useState<number>(0); // 0 = default, 1 = severe (+1 severity)
+  const [floodIntensity, setFloodIntensity] = useState<number>(0);
   const [hospitalsFull, setHospitalsFull] = useState<boolean>(false);
   const [weatherDelay, setWeatherDelay] = useState<boolean>(false);
+
+  // Responder Registration
+  const [responderName, setResponderName] = useState("");
+  const [responderPhone, setResponderPhone] = useState("");
+  const [responderAssets, setResponderAssets] = useState<string[]>(["ambulance"]);
+  const [responderDistrict, setResponderDistrict] = useState("Hyderabad");
+  const [responderStatus, setResponderStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [responderMsg, setResponderMsg] = useState("");
+  const [sidebarTab, setSidebarTab] = useState<"whatif" | "responder">("responder");
+  const [notificationsSent, setNotificationsSent] = useState<any[]>([]);
 
   // Map Integration States
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -376,7 +386,11 @@ export default function DashboardPage() {
         // Fast-forward animation to 10
         setActiveStep(10);
         setResponse(data);
+        setNotificationsSent(data.notifications_sent || []);
         setTickerMessage(`RESCUE SYSTEM CONVERGED. PRIORITY: ${data.rescue_plan.priority}. PLAN DISPATCHED`);
+        if ((data.notifications_sent || []).length > 0) {
+          setTickerMessage(`RESCUE PLAN DISPATCHED · ${data.notifications_sent.length} RESPONDER(S) NOTIFIED VIA WHATSAPP`);
+        }
       } catch (e) {
         setApiError("Network error — Is the backend running on " + API_URL + "?");
         console.error(e);
@@ -622,69 +636,232 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* 3. What-If Simulator & Simulation Controls */}
-          <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px" }}>
-            <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
-              🎛️ WHAT-IF SIMULATOR
+          {/* 3. Right Sidebar — tabbed: Responder Registration + What-If Simulator */}
+          <section style={{ background: "#0b1220", border: "1px solid #1e293b", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "0" }}>
+            {/* Tab switcher */}
+            <div style={{ display: "flex", gap: "6px", marginBottom: "16px" }}>
+              <button
+                onClick={() => setSidebarTab("responder")}
+                style={{
+                  flex: 1, padding: "7px", borderRadius: "6px", border: "none", fontSize: "11px", fontWeight: 700,
+                  cursor: "pointer", background: sidebarTab === "responder" ? "#16213e" : "transparent",
+                  color: sidebarTab === "responder" ? "#3b82f6" : "#64748b",
+                  borderBottom: sidebarTab === "responder" ? "2px solid #3b82f6" : "2px solid transparent"
+                }}
+              >📲 REGISTER</button>
+              <button
+                onClick={() => setSidebarTab("whatif")}
+                style={{
+                  flex: 1, padding: "7px", borderRadius: "6px", border: "none", fontSize: "11px", fontWeight: 700,
+                  cursor: "pointer", background: sidebarTab === "whatif" ? "#16213e" : "transparent",
+                  color: sidebarTab === "whatif" ? "#3b82f6" : "#64748b",
+                  borderBottom: sidebarTab === "whatif" ? "2px solid #3b82f6" : "2px solid transparent"
+                }}
+              >🎛️ WHAT-IF</button>
             </div>
 
-            {mode === "LIVE" ? (
-              <div style={{ fontSize: "12px", color: "#64748b", textAlign: "center", padding: "30px 10px" }}>
-                🚫 What-If Simulator is only active in <b>Simulation Mode</b>.
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {sidebarTab === "responder" ? (
+              /* ── Responder Registration Panel ── */
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "2px" }}>
+                  Register your number to receive real-time WhatsApp dispatch alerts when your asset is needed.
+                </div>
+
                 <div>
-                  <label style={{ fontSize: "12px", fontWeight: 600, color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
-                    Flood Peak Surge Intensity
-                  </label>
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    <button
-                      onClick={() => setFloodIntensity(0)}
-                      style={{
-                        flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
-                        background: floodIntensity === 0 ? "#1e293b" : "transparent",
-                        color: floodIntensity === 0 ? "#3b82f6" : "#94a3b8", cursor: "pointer"
-                      }}
-                    >
-                      Normal
-                    </button>
-                    <button
-                      onClick={() => setFloodIntensity(1)}
-                      style={{
-                        flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
-                        background: floodIntensity === 1 ? "#ef444422" : "transparent",
-                        color: floodIntensity === 1 ? "#ef4444" : "#94a3b8", cursor: "pointer"
-                      }}
-                    >
-                      Critical Surge (+1)
-                    </button>
+                  <label style={{ fontSize: "11px", color: "#64748b", display: "block", marginBottom: "4px" }}>Your Name</label>
+                  <input
+                    id="responder-name"
+                    value={responderName}
+                    onChange={e => setResponderName(e.target.value)}
+                    placeholder="e.g. Ravi Kumar"
+                    style={{
+                      width: "100%", padding: "8px 10px", borderRadius: "6px",
+                      background: "#0d1527", border: "1px solid #334155",
+                      color: "#f8fafc", fontSize: "12px", boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "11px", color: "#64748b", display: "block", marginBottom: "4px" }}>WhatsApp Number</label>
+                  <input
+                    id="responder-phone"
+                    value={responderPhone}
+                    onChange={e => setResponderPhone(e.target.value)}
+                    placeholder="e.g. 6304589007"
+                    style={{
+                      width: "100%", padding: "8px 10px", borderRadius: "6px",
+                      background: "#0d1527", border: "1px solid #334155",
+                      color: "#f8fafc", fontSize: "12px", boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "11px", color: "#64748b", display: "block", marginBottom: "6px" }}>Asset Type</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {["ambulance", "fire_truck", "rescue_team", "ndrf_unit", "police_station"].map(type => (
+                      <button
+                        key={type}
+                        onClick={() => setResponderAssets(prev =>
+                          prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+                        )}
+                        style={{
+                          padding: "4px 10px", borderRadius: "4px", fontSize: "10px", fontWeight: 700,
+                          border: "1px solid",
+                          borderColor: responderAssets.includes(type) ? "#3b82f6" : "#334155",
+                          background: responderAssets.includes(type) ? "#1d4ed822" : "transparent",
+                          color: responderAssets.includes(type) ? "#3b82f6" : "#64748b",
+                          cursor: "pointer"
+                        }}
+                      >
+                        {type === "ambulance" ? "🚑" : type === "fire_truck" ? "🚒" : type === "rescue_team" ? "👷" : type === "ndrf_unit" ? "🪖" : "👮"}{" "}
+                        {type.replace(/_/g, " ").toUpperCase()}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Gandhi Hospital Capacity Full</span>
-                  <input
-                    type="checkbox"
-                    checked={hospitalsFull}
-                    onChange={(e) => setHospitalsFull(e.target.checked)}
-                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
-                  />
+                <div>
+                  <label style={{ fontSize: "11px", color: "#64748b", display: "block", marginBottom: "4px" }}>District</label>
+                  <select
+                    value={responderDistrict}
+                    onChange={e => setResponderDistrict(e.target.value)}
+                    style={{
+                      width: "100%", padding: "8px 10px", borderRadius: "6px",
+                      background: "#0d1527", border: "1px solid #334155",
+                      color: "#f8fafc", fontSize: "12px"
+                    }}
+                  >
+                    {["Hyderabad", "Rangareddy", "Warangal", "Karimnagar", "Nizamabad", "Khammam", "Nalgonda", "Medchal", "Sangareddy"].map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Severe Monsoon Weather Delay</span>
-                  <input
-                    type="checkbox"
-                    checked={weatherDelay}
-                    onChange={(e) => setWeatherDelay(e.target.checked)}
-                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
-                  />
-                </div>
+                <button
+                  id="register-responder-btn"
+                  onClick={async () => {
+                    if (!responderPhone || !responderName) {
+                      setResponderMsg("Please fill in your name and phone number.");
+                      setResponderStatus("error");
+                      return;
+                    }
+                    setResponderStatus("loading");
+                    try {
+                      const res = await fetch(`${API_URL}/api/v1/responders/register`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          name: responderName,
+                          phone: responderPhone,
+                          asset_types: responderAssets,
+                          district: responderDistrict,
+                        })
+                      });
+                      if (res.ok) {
+                        const data = await res.json();
+                        setResponderStatus("success");
+                        setResponderMsg(`✅ Registered! You'll receive WhatsApp alerts on ${responderPhone}.`);
+                      } else {
+                        throw new Error("Registration failed");
+                      }
+                    } catch {
+                      setResponderStatus("error");
+                      setResponderMsg("❌ Registration failed. Is the backend running?");
+                    }
+                  }}
+                  disabled={responderStatus === "loading"}
+                  style={{
+                    width: "100%", padding: "10px", borderRadius: "6px", border: "none",
+                    background: responderStatus === "success" ? "#064e3b" : "#1d4ed8",
+                    color: "#fff", fontSize: "12px", fontWeight: 700,
+                    cursor: responderStatus === "loading" ? "not-allowed" : "pointer",
+                    boxShadow: "0 0 10px rgba(29, 78, 216, 0.3)"
+                  }}
+                >
+                  {responderStatus === "loading" ? "Registering..." : responderStatus === "success" ? "✅ Registered!" : "📲 REGISTER FOR DISPATCH ALERTS"}
+                </button>
 
-                <div style={{ borderTop: "1px solid #1e293b", paddingTop: "14px", fontSize: "11px", color: "#64748b" }}>
-                  💡 Changing parameters automatically modifies resource allocations, ETAs, and hospital routing on subsequent pipeline runs.
+                {responderMsg && (
+                  <div style={{
+                    fontSize: "11px", padding: "8px", borderRadius: "6px",
+                    background: responderStatus === "success" ? "#065f4622" : "#ef444422",
+                    color: responderStatus === "success" ? "#34d399" : "#fca5a5",
+                    border: `1px solid ${responderStatus === "success" ? "#065f4688" : "#ef444488"}`
+                  }}>
+                    {responderMsg}
+                  </div>
+                )}
+
+                {notificationsSent.length > 0 && (
+                  <div style={{ borderTop: "1px solid #1e293b", paddingTop: "12px", marginTop: "4px" }}>
+                    <div style={{ fontSize: "11px", color: "#34d399", fontWeight: 700, marginBottom: "6px" }}>
+                      📨 {notificationsSent.length} DISPATCH ALERT(S) SENT
+                    </div>
+                    {notificationsSent.map((n, i) => (
+                      <div key={i} style={{
+                        fontSize: "10px", color: "#64748b", padding: "4px 8px",
+                        background: "#0d1527", borderRadius: "4px", marginBottom: "4px",
+                        borderLeft: "2px solid #34d39955"
+                      }}>
+                        {n.status === "simulated" ? "💬 SIMULATED" : n.status === "sent" ? "✅ SENT" : "⚠️ " + n.status.toUpperCase()} → {n.responder_name} ({n.phone})
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* ── What-If Simulator Panel ── */
+              <div>
+                <div style={{ fontSize: "12px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" }}>
+                  🎛️ WHAT-IF SIMULATOR
                 </div>
+                {mode === "LIVE" ? (
+                  <div style={{ fontSize: "12px", color: "#64748b", textAlign: "center", padding: "30px 10px" }}>
+                    🚫 What-If Simulator is only active in <b>Simulation Mode</b>.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: 600, color: "#cbd5e1", display: "block", marginBottom: "6px" }}>
+                        Flood Peak Surge Intensity
+                      </label>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          onClick={() => setFloodIntensity(0)}
+                          style={{
+                            flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
+                            background: floodIntensity === 0 ? "#1e293b" : "transparent",
+                            color: floodIntensity === 0 ? "#3b82f6" : "#94a3b8", cursor: "pointer"
+                          }}
+                        >Normal</button>
+                        <button
+                          onClick={() => setFloodIntensity(1)}
+                          style={{
+                            flex: 1, padding: "6px", borderRadius: "4px", fontSize: "11px", border: "1px solid #334155",
+                            background: floodIntensity === 1 ? "#ef444422" : "transparent",
+                            color: floodIntensity === 1 ? "#ef4444" : "#94a3b8", cursor: "pointer"
+                          }}
+                        >Critical Surge (+1)</button>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Gandhi Hospital Capacity Full</span>
+                      <input type="checkbox" checked={hospitalsFull} onChange={e => setHospitalsFull(e.target.checked)} style={{ width: "16px", height: "16px", cursor: "pointer" }} />
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Severe Monsoon Weather Delay</span>
+                      <input type="checkbox" checked={weatherDelay} onChange={e => setWeatherDelay(e.target.checked)} style={{ width: "16px", height: "16px", cursor: "pointer" }} />
+                    </div>
+
+                    <div style={{ borderTop: "1px solid #1e293b", paddingTop: "14px", fontSize: "11px", color: "#64748b" }}>
+                      💡 Changing parameters automatically modifies resource allocations, ETAs, and hospital routing.
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </section>
