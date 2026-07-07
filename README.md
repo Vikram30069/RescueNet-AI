@@ -307,65 +307,46 @@ RescueNet AI is a **fully automated multi-agent orchestration system** that tran
 
 ## ☁️ AWS Infrastructure
 
-```mermaid
-graph TD
-    subgraph Users["👤 End Users"]
-        U1[Emergency Commanders]
-        U2[Field Teams]
-        U3[Hospital Admins]
-    end
+```
+ ┌───────────────────────────────────────────────────────────────────────────────────┐
+ │                            ☁️  AWS CLOUD INFRASTRUCTURE                           │
+ └───────────────────────────────────────────────────────────────────────────────────┘
 
-    subgraph AWS_Cloud["☁️ AWS Cloud"]
-        direction TB
-
-        subgraph Frontend["Frontend Layer"]
-            AMP[AWS Amplify<br/>Next.js 14 CDN<br/>Global Distribution]
-        end
-
-        subgraph Compute["Compute Layer"]
-            EC2[Amazon EC2<br/>FastAPI Backend<br/>Docker Container]
-            ECR[Amazon ECR<br/>Docker Registry<br/>rescuenet-backend:latest]
-            IAM[AWS IAM<br/>Role-Based Auth<br/>ECR Token Generation]
-        end
-
-        subgraph AI["AI / LLM Layer"]
-            BED[AWS Bedrock<br/>Claude 3 Sonnet<br/>Primary LLM Engine]
-        end
-
-        subgraph Messaging["Messaging Layer"]
-            SNS[Amazon SNS<br/>Fan-out Alerts<br/>Multi-channel dispatch]
-            SES[Amazon SES<br/>Email Notifications<br/>Incident Reports]
-        end
-
-        subgraph Storage["Storage Layer"]
-            S3[Amazon S3<br/>Rescue Plan Archives<br/>Audit Log Storage]
-            SEC[AWS Secrets Manager<br/>API Keys, DB URIs<br/>Twilio Credentials]
-        end
-
-        subgraph Observability["Observability"]
-            CW[Amazon CloudWatch<br/>Agent Step Logs<br/>Performance Metrics]
-        end
-    end
-
-    subgraph External["🌐 External Services"]
-        NEON[(Neon Serverless<br/>PostgreSQL<br/>Disaster Asset DB)]
-        TWI[Twilio<br/>SMS · Voice · WhatsApp<br/>Field Alert Dispatch]
-        LLM2[OpenAI / Gemini<br/>Fallback LLM<br/>Provider]
-    end
-
-    U1 & U2 & U3 -->|HTTPS| AMP
-    AMP -->|API Calls| EC2
-    EC2 -->|Pulls Image| ECR
-    IAM -->|Grants Auth| ECR
-    EC2 -->|LLM Inference| BED
-    EC2 -->|Fan-out Alerts| SNS
-    SNS --> TWI
-    SNS --> SES
-    EC2 -->|Store Plans| S3
-    EC2 -->|Read Secrets| SEC
-    EC2 -->|PostgreSQL| NEON
-    EC2 -->|Logs & Metrics| CW
-    EC2 -->|Fallback LLM| LLM2
+  👤 Emergency Commanders · Field Teams · Hospital Admins
+           │  HTTPS
+           ▼
+  ┌────────────────────────────────────┐
+  │  AWS AMPLIFY (CDN)                 │   ← Next.js 14, global distribution,
+  │  Next.js 14 Frontend               │     CI/CD from GitHub, SSL termination
+  └─────────────────┬──────────────────┘
+                    │  REST API Calls
+                    ▼
+  ┌────────────────────────────────────┐     ┌──────────────────────────────────┐
+  │  AMAZON EC2 (Docker)               │────▶│  AMAZON ECR                      │
+  │  FastAPI Backend                   │     │  Docker Registry                 │
+  │  Pydantic · CrewAI Orchestrator    │     │  rescuenet-backend:latest        │
+  └──────────────────┬─────────────────┘     └──────────────────────────────────┘
+                     │                                     ▲
+         ┌───────────┼──────────────────────┐             │
+         ▼           ▼           ▼          ▼       ┌─────┴────────────────┐
+  ┌──────────┐ ┌──────────┐ ┌────────┐ ┌──────────┐ │  AWS IAM             │
+  │ AWS      │ │ AMAZON   │ │ AMAZON │ │ AWS      │ │  Role-Based Auth     │
+  │ BEDROCK  │ │ SNS      │ │ S3     │ │ SECRETS  │ │  ECR Token Generator │
+  │          │ │          │ │        │ │ MANAGER  │ └──────────────────────┘
+  │ Claude 3 │ │ Fan-out  │ │ Plan   │ │          │
+  │ Sonnet   │ │ Alerts   │ │ Store  │ │ API Keys │  ┌──────────────────────┐
+  │ LLM API  │ │ Multi-ch.│ │ Audit  │ │ DB URIs  │  │  AMAZON CLOUDWATCH   │
+  └──────────┘ └────┬─────┘ │ Logs   │ │ Twilio   │  │  Agent Step Logs     │
+                    │       └────────┘ └──────────┘  │  Metrics · Alarms    │
+         ┌──────────┴─────┐                          └──────────────────────┘
+         ▼                ▼
+  ┌────────────┐   ┌────────────┐
+  │  TWILIO    │   │ AMAZON SES │    ┌─────────────────────────────┐
+  │  SMS/Voice │   │  Email     │    │  NEON SERVERLESS POSTGRES    │
+  │  WhatsApp  │   │  Reports   │    │  Disaster Asset Database     │
+  └────────────┘   └────────────┘    │  Incidents · Rescue Plans   │
+                                     │  Agent Decisions · Alerts   │
+                                     └─────────────────────────────┘
 ```
 
 ### AWS Services Breakdown
