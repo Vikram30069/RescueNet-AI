@@ -1,12 +1,16 @@
 <div align="center">
 
-# 🚨 RescueNet AI
-
-### _When Every Second Counts, AI Coordinates_
-
-**A 10-Agent AI Orchestrator for Real-Time Disaster Response, Survivor Prioritization & Automated Rescue Dispatch**
+<!-- 3D Animated Hero Banner -->
+<img src="https://raw.githubusercontent.com/Vikram30069/RescueNet-AI/main/banner.svg" width="100%" alt="RescueNet AI - 3D Animated Banner" />
 
 <br/>
+
+<!-- Dynamic Animated Terminal Status -->
+<a href="https://github.com/Vikram30069/RescueNet-AI">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&duration=2800&pause=1000&color=EF4444&center=true&vCenter=true&width=700&lines=When+Every+Second+Counts%2C+AI+Coordinates;10-Agent+Autonomous+Disaster+Dispatch+Engine;Telangana+GIS+Asset+Routing+%E2%80%A2+CrewAI+%E2%80%A2+FastAPI+%E2%80%A2+AWS;From+Distress+Chaos+to+Rescue+Plan+in+%3C45+Seconds" alt="RescueNet AI Animated Terminal" />
+</a>
+
+<br/><br/>
 
 [![Status](https://img.shields.io/badge/Status-Active_Autonomous_Dispatch-brightgreen?style=for-the-badge&logo=shield&logoColor=white)](.)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
