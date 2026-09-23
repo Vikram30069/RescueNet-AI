@@ -1,0 +1,144 @@
+<svg width="100%" height="240" viewBox="0 0 1000 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Deep Emergency Dark Background -->
+    <linearGradient id="rescueBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#180707"/>
+      <stop offset="50%" stop-color="#090303"/>
+      <stop offset="100%" stop-color="#140606"/>
+    </linearGradient>
+
+    <!-- Emergency Crimson & Amber Cyber Gradients -->
+    <linearGradient id="emergencyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="cubeTopRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cubeLeftRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#c2410c" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="cubeRightRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#991b1b" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#9a3412" stop-opacity="0.75"/>
+    </linearGradient>
+
+    <!-- 3D Glow Filters -->
+    <filter id="redGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="softRedGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <style>
+      @keyframes floatRescueCube1 {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-16px) rotate(4deg); }
+      }
+      @keyframes floatRescueCube2 {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-14px) rotate(-5deg); }
+      }
+      @keyframes rescueGridWave {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 80; }
+      }
+      @keyframes emergencyPulse {
+        0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.45)); }
+        50% { opacity: 1; filter: drop-shadow(0 0 28px rgba(249, 115, 22, 0.85)); }
+      }
+      @keyframes alarmBeacon {
+        0%, 100% { r: 3px; opacity: 0.6; }
+        50% { r: 6px; opacity: 1; }
+      }
+      .cubeR1 { animation: floatRescueCube1 6s ease-in-out infinite; transform-origin: 100px 110px; }
+      .cubeR2 { animation: floatRescueCube2 7s ease-in-out infinite; transform-origin: 900px 100px; }
+      .titlePulse { animation: emergencyPulse 3s ease-in-out infinite; }
+      .beacon { animation: alarmBeacon 1.8s ease-in-out infinite; }
+      .gridLineRed { stroke: #450a0a; stroke-width: 1; stroke-dasharray: 4 4; animation: rescueGridWave 8s linear infinite; }
+    </style>
+  </defs>
+
+  <!-- Container Box with Rounded Crimson Border -->
+  <rect width="1000" height="240" rx="16" fill="url(#rescueBg)"/>
+  <rect width="998" height="238" x="1" y="1" rx="15" fill="none" stroke="url(#emergencyGrad)" stroke-width="1.5" stroke-opacity="0.5"/>
+
+  <!-- 3D Perspective Radar Grid Background -->
+  <g opacity="0.35">
+    <line x1="500" y1="30" x2="0" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="150" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="300" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="420" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="580" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="700" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="850" y2="240" class="gridLineRed"/>
+    <line x1="500" y1="30" x2="1000" y2="240" class="gridLineRed"/>
+    <!-- Radar Distance Arcs -->
+    <line x1="0" y1="230" x2="1000" y2="230" stroke="#ef4444" stroke-opacity="0.4" stroke-width="1.5"/>
+    <line x1="80" y1="200" x2="920" y2="200" stroke="#ef4444" stroke-opacity="0.3" stroke-width="1"/>
+    <line x1="180" y1="170" x2="820" y2="170" stroke="#ef4444" stroke-opacity="0.2" stroke-width="1"/>
+    <line x1="280" y1="140" x2="720" y2="140" stroke="#ef4444" stroke-opacity="0.12" stroke-width="1"/>
+  </g>
+
+  <!-- Alarm Radar Beacons -->
+  <circle cx="120" cy="50" r="4" fill="#ef4444" class="beacon"/>
+  <circle cx="880" cy="45" r="4" fill="#f97316" class="beacon"/>
+  <circle cx="200" cy="180" r="3" fill="#facc15" class="beacon"/>
+
+  <!-- 3D Floating Isometric Emergency Cube (Left) -->
+  <g class="cubeR1">
+    <polygon points="100,70 140,50 180,70 140,90" fill="url(#cubeTopRed)" filter="url(#softRedGlow)"/>
+    <polygon points="100,70 140,90 140,140 100,120" fill="url(#cubeLeftRed)"/>
+    <polygon points="140,90 180,70 180,120 140,140" fill="url(#cubeRightRed)"/>
+    <polyline points="100,70 140,90 180,70" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.8"/>
+    <line x1="140" y1="90" x2="140" y2="140" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.6"/>
+  </g>
+
+  <!-- 3D Floating Isometric Emergency Cube (Right) -->
+  <g class="cubeR2">
+    <polygon points="880,55 925,32 970,55 925,78" fill="url(#cubeTopRed)" filter="url(#softRedGlow)"/>
+    <polygon points="880,55 925,78 925,135 880,112" fill="url(#cubeLeftRed)"/>
+    <polygon points="925,78 970,55 970,112 925,135" fill="url(#cubeRightRed)"/>
+    <polyline points="880,55 925,78 970,55" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.9"/>
+    <line x1="925" y1="78" x2="925" y2="135" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.7"/>
+  </g>
+
+  <!-- Central Title: RESCUENET AI -->
+  <g text-anchor="middle" class="titlePulse">
+    <text x="502" y="102" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="900" fill="#090303" letter-spacing="4">RESCUENET AI</text>
+    <text x="500" y="100" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="900" fill="url(#emergencyGrad)" letter-spacing="4" filter="url(#redGlow)">RESCUENET AI</text>
+  </g>
+
+  <!-- Subtitle Tagline Pill -->
+  <g text-anchor="middle">
+    <rect x="150" y="130" width="700" height="34" rx="17" fill="#1e0808" fill-opacity="0.85" stroke="#ef4444" stroke-width="1" stroke-opacity="0.45"/>
+    <text x="500" y="153" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="700" fill="#f8fafc" letter-spacing="1.5">
+      <tspan fill="#ef4444">10-AGENT AUTONOMOUS DISASTER DISPATCH</tspan>  •  <tspan fill="#f97316">CREWAI</tspan>  •  <tspan fill="#facc15">FASTAPI</tspan>  •  <tspan fill="#38bdf8">AWS</tspan>
+    </text>
+  </g>
+
+  <!-- Animated Bottom Accent Bar -->
+  <g>
+    <rect x="350" y="182" width="300" height="2" rx="1" fill="url(#emergencyGrad)" filter="url(#redGlow)"/>
+    <circle cx="500" cy="183" r="3" fill="#ef4444" filter="url(#redGlow)"/>
+  </g>
+
+  <!-- Operational Status Sub-Pill -->
+  <g text-anchor="middle" opacity="0.85">
+    <text x="500" y="214" font-family="'Fira Code', monospace" font-size="12" font-weight="600" fill="#fca5a5" letter-spacing="1">
+      [ When Every Second Counts • Automated Twilio Voice &amp; SMS • Telangana GIS ]
+    </text>
+  </g>
+</svg>
