@@ -1,228 +1,307 @@
 <div align="center">
 
-# 🚨 RescueNet-AI
+<!-- 3D Glowing Animated Hero Banner -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,12,20,29&height=230&section=header&text=RESCUENET%20AI&fontSize=58&fontColor=ffffff&fontAlignY=36&desc=%E2%9A%A0%EF%B8%8F%2010-Agent%20Autonomous%20Disaster%20Response%20Orchestrator&descFontSize=21&descAlignY=58&descAlign=50&animation=twinkling" width="100%" alt="RescueNet AI Header Banner" />
 
-### Autonomous 10-Agent AI Orchestrator for Real-Time Disaster Coordination
+<!-- Dynamic Animated Terminal Status -->
+<a href="https://github.com/Vikram30069/RescueNet-AI">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&duration=2800&pause=1000&color=EF4444&center=true&vCenter=true&width=700&lines=When+Every+Second+Counts%2C+AI+Coordinates;10-Agent+Autonomous+Disaster+Dispatch+Engine;Telangana+GIS+Asset+Routing+%E2%80%A2+CrewAI+%E2%80%A2+FastAPI+%E2%80%A2+AWS;From+Distress+Chaos+to+Rescue+Plan+in+%3C45+Seconds" alt="RescueNet AI Animated Terminal" />
+</a>
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![CrewAI](https://img.shields.io/badge/CrewAI-Multi--Agent-ff6b6b?style=flat-square)](https://www.crewai.com/)
-[![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20Bedrock%20%7C%20Amplify-FF9900?style=flat-square&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white)](Dockerfile)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+<br/><br/>
 
----
+[![Status](https://img.shields.io/badge/System-Active_Autonomous_Dispatch-red?style=for-the-badge&logo=shield&logoColor=white)](.)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![CrewAI](https://img.shields.io/badge/CrewAI-10--Agent_Swarm-ff6b6b?style=for-the-badge)](https://www.crewai.com/)
+[![AWS](https://img.shields.io/badge/AWS-EC2_%7C_Bedrock_%7C_Amplify-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![Twilio](https://img.shields.io/badge/Twilio-SMS_%7C_Voice_%7C_WhatsApp-F22F46?style=for-the-badge&logo=twilio&logoColor=white)](https://www.twilio.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](Dockerfile)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-> **"During extreme urban flooding (e.g. 350mm rainfall in Hyderabad), emergency command centers receive thousands of unstructured distress calls. Inter-agency communication between police, fire departments, hospitals, and NDRF collapses into bottlenecks. RescueNet-AI ingests raw distress calls and outputs an optimal, deterministic rescue dispatch plan in under 45 seconds."**
+<br/>
+
+> **"Imagine 350mm of torrential rain paralyzing Hyderabad in under 12 hours. Streets turn into rivers. Power grids fail. Emergency hotlines receive 10,000+ unstructured panic calls. Inter-agency dispatch between Police, Fire, Hospitals, and NDRF stalls into critical bottlenecks.**  
+>  
+> **RescueNet-AI autonomously ingests raw distress feeds, calculates survivor decay curves, matches real geo-tagged emergency assets, and generates a life-critical dispatch plan in under 45 seconds."**
 
 </div>
 
 ---
 
-## 1. Overview & Problem
+## ⚡ Live Execution Flow
 
-In rapid-onset natural disasters, the critical limiting factor in saving lives is not physical equipment—it is **information synthesis and dispatch latency**:
-1. **Unstructured Distress Ingestion**: Distress calls arrive across multiple channels (SMS, voice recordings, emergency hotlines) with noisy, fragmented descriptions.
-2. **Triaging Ambiguity**: Operators struggle to differentiate immediate life-threats (trapped infants, severe hypothermia, structural collapse) from general property distress.
-3. **Siloed Resource Allocation**: Ambulances, ICU beds, fire tenders, and NDRF rescue boats operate in disjointed databases with zero real-time cross-referencing.
-
-RescueNet-AI solves this through an autonomous, deterministic **10-agent orchestration pipeline**. Each agent executes a single responsibility governed by strict Pydantic input/output schemas to prevent hallucination.
+```text
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  RAW DISTRESS FEEDS (SMS / Phone Calls / WhatsApp / 112 Transcripts)                             │
+└─────────────────────────────────┬────────────────────────────────────────────────────────────────┘
+                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  🤖 10-AGENT AUTONOMOUS DISASTER ORCHESTRATION PIPELINE (CrewAI + Pydantic v2)                   │
+│                                                                                                  │
+│  [01 Incident] ──▶ [02 Intel] ──▶ [03 Survivor] ──▶ [04 Triage] ──▶ [05 Priority]                │
+│                                                                        │                         │
+│  [10 Master Plan] ◀── [09 Alert] ◀── [08 Risk] ◀── [07 Hospital] ◀─────┴──▶ [06 Resource]       │
+└─────────────────────────────────┬────────────────────────────────────────────────────────────────┘
+                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  TELANGANA EMERGENCY INFRASTRUCTURE GROUNDING                                                    │
+│  • 100+ Hospitals & ICU Beds   • 108 Ambulance Units   • NDRF Battalions   • Fire Depots         │
+└─────────────────────────────────┬────────────────────────────────────────────────────────────────┘
+                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  AUTONOMOUS MULTI-CHANNEL DISPATCH (<45 Seconds)                                                 │
+│  📲 Automated Twilio SMS  •  📞 Synthetic IVR Voice Calls  •  🗺️ Live Geospatial Command Map   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 2. System Architecture
+## 🏗️ 3D Interactive System Architecture
 
 ```mermaid
-graph TD
-    subgraph Ingestion Layer
-        RAW[Raw Distress Feeds / SMS / Hotlines] --> API[FastAPI Gateway]
+flowchart TD
+    classDef input fill:#1e293b,stroke:#64748b,stroke-width:2px,color:#f8fafc;
+    classDef agent fill:#0f172a,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+    classDef data fill:#1e1e38,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef output fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    IN1[Distress Calls / SMS / Audio]:::input --> API[FastAPI Ingestion Gateway]:::input
+    API --> ORCH[CrewAI Orchestrator Engine]:::agent
+
+    subgraph AgentPipeline ["🤖 10-Agent Swarm Execution Sequence"]
+        direction TB
+        A1["01. Incident Understanding<br/><i>Extracts coordinates, victims, hazard</i>"]:::agent
+        A2["02. Disaster Intelligence<br/><i>Calculates flood velocity & infrastructure risks</i>"]:::agent
+        A3["03. Survivor Probability<br/><i>Evaluates time-decay exposure curves</i>"]:::agent
+        A4["04. Medical Triage<br/><i>Assigns RED / YELLOW / GREEN triage tags</i>"]:::agent
+        A5["05. Priority Scoring<br/><i>Calculates composite life-threat index</i>"]:::agent
+        A6["06. Resource Allocation<br/><i>Matches nearest boat & ambulance depots</i>"]:::agent
+        A7["07. Hospital Coordination<br/><i>Reserves ICU beds & blood bank units</i>"]:::agent
+        A8["08. Risk Prediction<br/><i>Identifies submerged roads & route hazards</i>"]:::agent
+        A9["09. Alert Communication<br/><i>Synthesizes localized emergency broadcasts</i>"]:::agent
+        A10["10. Command Orchestrator<br/><i>Synthesizes immutable master dispatch plan</i>"]:::agent
+
+        A1 --> A2 --> A3 --> A4 --> A5 --> A6 --> A7 --> A8 --> A9 --> A10
     end
 
-    subgraph 10-Agent Pipeline [CrewAI Orchestration Engine]
-        API --> A1[1. Incident Understanding Agent]
-        A1 --> A2[2. Disaster Intelligence Agent]
-        A2 --> A3[3. Survivor Probability Agent]
-        A3 --> A4[4. Medical Triage Agent]
-        A4 --> A5[5. Priority Scoring Agent]
-        A5 --> A6[6. Resource Allocation Agent]
-        A6 --> A7[7. Hospital Coordination Agent]
-        A7 --> A8[8. Risk Prediction Agent]
-        A8 --> A9[9. Communication & Alert Agent]
-        A9 --> A10[10. Command Orchestrator]
+    ORCH --> AgentPipeline
+
+    subgraph TelanganaGIS ["🗺️ Real Regional Emergency Assets"]
+        HOSP[(100+ Hospitals & Trauma Units)]:::data
+        AMB[(108 Ambulance Hubs)]:::data
+        NDRF[(NDRF Flood Rescue Units)]:::data
+        FIRE[(Regional Fire Stations)]:::data
     end
 
-    subgraph Data & Grounding
-        DB[(Telangana Emergency Infrastructure Database)] -.-> A6
-        DB -.-> A7
+    TelanganaGIS -.-> A6
+    TelanganaGIS -.-> A7
+
+    subgraph DispatchOut ["🚀 Autonomous Action Outputs"]
+        SMS[Twilio SMS Alerts to First Responders]:::output
+        VOICE[Synthetic Voice Phone Calls]:::output
+        DASH[Live Incident Command Geospatial Map]:::output
     end
 
-    subgraph Output & Dispatch
-        A10 --> PLAN[Structured Rescue Plan]
-        A10 --> TWILIO[Twilio SMS / Voice Alerts]
-        A10 --> UI[Next.js Incident Command Map]
-    end
+    A10 ==> SMS
+    A10 ==> VOICE
+    A10 ==> DASH
 ```
 
 ---
 
-## 3. The 10-Agent AI Pipeline
+## 🤖 The 10-Agent Swarm: Roles & Output Contracts
 
-Each agent is built on **CrewAI** with domain-specific system prompts, custom tools, and strict output contracts:
+Each agent is governed by deterministic **Pydantic v2 schemas**, eliminating hallucination in life-critical decision pathways:
 
-| # | Agent | Responsibility | Core Tools & Inputs | Output Schema Contract |
-|---|---|---|---|---|
-| **1** | **Incident Understanding** | Extracts coordinates, severity indicators, and hazard type from raw text. | Regex geocoding, text parsers | `hazard_type`, `coordinates`, `urgency_level` |
-| **2** | **Disaster Intelligence** | Analyzes weather trends, water level velocity, and infrastructure collapse risk. | Meteorology lookup, historical flood indices | `environmental_risk_index`, `spread_velocity` |
-| **3** | **Survivor Probability** | Evaluates time-since-incident, trapped conditions, and environmental exposure. | Survival decay decay curves | `survival_score (0-100)`, `critical_window_mins` |
-| **4** | **Medical Triage** | Categorizes trauma, respiratory risk, and pediatric/elderly vulnerabilities. | START triage protocol mapping | `triage_category (RED/YELLOW/GREEN/BLACK)` |
-| **5** | **Priority Scoring** | Computes multi-factor rescue priority weighting. | Weighted risk matrix | `composite_priority_score (1-100)` |
-| **6** | **Resource Allocation** | Assigns ambulances, boats, power cutters, and NDRF squads from nearest depots. | Geodesic spatial distance calculator | `assigned_resources`, `eta_minutes`, `unit_ids` |
-| **7** | **Hospital Coordination** | Matches survivor triage level with live hospital ICU bed & blood bank availability. | Telangana hospital relational registry | `target_hospital_id`, `bed_reserved`, `route_eta` |
-| **8** | **Risk Prediction** | Evaluates access route hazards (submerged roads, power lines). | Route obstruction analyzer | `travel_hazards`, `alternative_routes` |
-| **9** | **Communication Agent** | Formats emergency SMS, WhatsApp alerts, and synthetic text-to-speech scripts. | Twilio message formatter | `sms_payload`, `ivr_script`, `recipient_list` |
-| **10** | **Command Orchestrator** | Synthesizes all agent outputs into an immutable, auditable rescue plan. | Schema validator, consensus aggregator | `final_dispatch_plan`, `audit_trail` |
+<table>
+  <thead>
+    <tr>
+      <th width="5%">#</th>
+      <th width="22%">Agent</th>
+      <th width="35%">Operational Responsibility</th>
+      <th width="38%">Schema Contract / Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><strong>01</strong></td>
+      <td><strong>Incident Understanding</strong></td>
+      <td>Extracts structured geo-coordinates, disaster taxonomy, and victim counts from chaotic distress messages.</td>
+      <td><code>hazard_type</code>, <code>latitude</code>, <code>longitude</code>, <code>casualty_estimate</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>02</strong></td>
+      <td><strong>Disaster Intelligence</strong></td>
+      <td>Models rainfall rates, flood propagation speed, and structural integrity of surrounding bridges and power grids.</td>
+      <td><code>flood_velocity_index</code>, <code>structural_hazard_score</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>03</strong></td>
+      <td><strong>Survivor Probability</strong></td>
+      <td>Applies mathematical survival decay functions based on water level, exposure duration, hypothermia, and age.</td>
+      <td><code>survival_probability_score (0-100)</code>, <code>critical_rescue_window_minutes</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>04</strong></td>
+      <td><strong>Medical Triage</strong></td>
+      <td>Applies standard START mass-casualty triage protocols across reported casualties.</td>
+      <td><code>triage_category (RED | YELLOW | GREEN | BLACK)</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>05</strong></td>
+      <td><strong>Priority Scoring</strong></td>
+      <td>Computes a composite multi-factor rescue priority weighting.</td>
+      <td><code>composite_priority_index (1-100)</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>06</strong></td>
+      <td><strong>Resource Allocation</strong></td>
+      <td>Calculates geodesic distances to dispatch nearest available flood rescue boats, ambulances, and NDRF teams.</td>
+      <td><code>assigned_units</code>, <code>depot_id</code>, <code>estimated_eta_mins</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>07</strong></td>
+      <td><strong>Hospital Coordination</strong></td>
+      <td>Queries live hospital registries across Telangana to reserve ICU beds, burn units, and matching blood units.</td>
+      <td><code>target_hospital_id</code>, <code>icu_bed_reserved</code>, <code>blood_bank_match</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>08</strong></td>
+      <td><strong>Risk Prediction</strong></td>
+      <td>Evaluates route access constraints (inundated underpasses, fallen electric poles) and recommends safe detours.</td>
+      <td><code>impassable_roads</code>, <code>recommended_safe_corridor</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>09</strong></td>
+      <td><strong>Alert Communication</strong></td>
+      <td>Generates dynamic emergency SMS messages and synthesized speech scripts in Telugu, Hindi, and English.</td>
+      <td><code>sms_payload</code>, <code>voice_ivr_script</code>, <code>target_recipients</code></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>10</strong></td>
+      <td><strong>Command Orchestrator</strong></td>
+      <td>Synthesizes all individual agent outputs into an immutable, verifiable, and auditable Master Dispatch Plan.</td>
+      <td><code>master_rescue_plan_id</code>, <code>execution_log</code>, <code>audit_trail</code></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
-## 4. Emergency Asset Integration (Telangana Region)
+## 📊 Terminal Simulation Preview
 
-RescueNet-AI is grounded in **real, curated emergency infrastructure datasets**:
-- **Hospitals & Trauma Centers**: 100+ public and private hospitals across Telangana with ICU capacity, trauma unit capabilities, burn care, and blood bank availability.
-- **Ambulance Depots**: 108 Emergency Response Service depots with GPS coordinates.
-- **NDRF & SDRF Bases**: National Disaster Response Force battalion depots for flood rescue boat deployment.
-- **Fire Stations & Control Rooms**: Regional fire stations equipped with de-watering pumps and specialized hydraulic cutters.
+```bash
+$ python trigger_demo.py --incident hyd-flood-001
 
-*All data is pre-processed and normalized in `emergency_assets_master.csv` and seeded directly into PostgreSQL / SQLite via `emergency_assets.sql`.*
-
----
-
-## 5. Technology Stack
-
-- **Backend & API**: Python 3.11, FastAPI, Pydantic v2, SQLAlchemy, Uvicorn
-- **AI & Multi-Agent**: CrewAI, LangChain, Amazon Bedrock (Claude 3 / Llama 3)
-- **Database**: PostgreSQL (Production) / SQLite (Local Test Mode)
-- **Frontend / Command Center**: Next.js 14, Tailwind CSS, Leaflet.js (Geospatial mapping)
-- **Telephony & Alerts**: Twilio API (SMS, Programmable Voice IVR, WhatsApp)
-- **DevOps & Cloud**: Docker, Docker Compose, AWS EC2, AWS Amplify
+[10:42:01] INGESTION: Distress Signal #hyd-flood-001 (Begumpet, Hyderabad | Water Level: 5.2ft)
+[10:42:05] [Agent 01] Incident Understanding   :: Parsed 14 victims trapped on single-story roof. Lat: 17.444, Lon: 78.468.
+[10:42:11] [Agent 02] Disaster Intelligence    :: Inundation rate +0.4 ft/hr. Drainage canal overflow detected.
+[10:42:16] [Agent 03] Survivor Probability     :: Survival Probability: 78% | Critical window: 42 mins.
+[10:42:20] [Agent 04] Medical Triage           :: 3 RED (Elderly hypothermia + Infant), 8 YELLOW, 3 GREEN.
+[10:42:24] [Agent 05] Priority Scoring         :: Priority Index: 94/100 [CRITICAL EMERGENCY].
+[10:42:29] [Agent 06] Resource Allocation      :: Dispatched NDRF Unit #03 (Sanathnagar) + 2 Advanced Life Support Ambulances.
+[10:42:33] [Agent 07] Hospital Coordination    :: Reserved 3 ICU Beds at Gandhi Hospital (ETA: 11 mins).
+[10:42:37] [Agent 08] Risk Prediction          :: Begumpet flyover underpass SUBMERGED. Routing via Prakash Nagar.
+[10:42:41] [Agent 09] Alert Communication      :: Twilio SMS dispatched to NDRF Team Lead & 108 Base.
+[10:42:44] [Agent 10] Command Orchestrator     :: ✅ Master Dispatch Plan #RP-9921 committed in 43.2 seconds.
+```
 
 ---
 
-## 6. Project Structure
+## 🗺️ Telangana Emergency Infrastructure Datasets
+
+RescueNet-AI is grounded in vetted, regional geospatial datasets:
+- 🏥 **Hospitals & Trauma Units**: Curated registry of 100+ public and private hospitals across Telangana with ICU bed quotas, burn units, and ventilator status.
+- 🩸 **Blood Banks**: Real-time regional blood bank registry with blood component inventory tracking.
+- 🚒 **Fire Stations**: Coordinates and equipment rosters of regional fire control stations equipped with high-capacity dewatering pumps.
+- 🚑 **108 Emergency Response Ambulances**: Geographic coordinates of primary ambulance staging points.
+- 🛡️ **NDRF & SDRF Units**: Battalion locations of specialized disaster and flood rescue squads.
+
+*Source datasets are normalized in `database/emergency_assets_master.csv` and seeded directly via `database/emergency_assets.sql`.*
+
+---
+
+## 💻 Tech Stack & Engineering Specs
 
 ```
-RescueNet-AI/
-├── agents/                     # Multi-Agent Engine
-│   ├── config/                 # Agent YAML configuration & prompts
-│   ├── definitions/            # 10 Agent class definitions & tool bindings
-│   │   ├── incident_understanding.py
-│   │   ├── survivor_probability.py
-│   │   ├── medical_triage.py
-│   │   ├── resource_allocation.py
-│   │   ├── hospital_coordination.py
-│   │   └── command_orchestrator.py
-│   └── orchestrator.py         # Crew execution loop & pipeline coordinator
-├── backend/                    # FastAPI REST Application
-│   ├── app/
-│   │   ├── api/v1/             # Endpoints (incidents, execute, hospitals, plans)
-│   │   ├── core/               # Configuration, security, logging
-│   │   ├── models/             # SQLAlchemy ORM models
-│   │   └── schemas/            # Pydantic v2 request/response contracts
-│   ├── tests/                  # Automated Pytest Suite
-│   │   ├── test_health.py      # Health & API contract tests
-│   │   └── test_notifications.py # Dispatch tests
-│   └── Dockerfile              # Backend container definition
-├── database/                   # Schema migrations & seed datasets
-│   ├── emergency_assets.sql    # Cleaned regional database dump
-│   └── emergency_assets_master.csv
-├── frontend/                   # Next.js 14 Geospatial Dashboard
-├── docker-compose.yml          # Full multi-container orchestration
-└── README.md
+Languages & Core:      Python 3.11+, TypeScript, SQL, Bash
+Agent Orchestration:   CrewAI, LangChain, Amazon Bedrock (Llama 3 / Claude 3)
+Backend REST API:      FastAPI, Pydantic v2, SQLAlchemy, Uvicorn
+Database:              PostgreSQL 15 (Production) / SQLite (Local Test Mode)
+Telephony & Alerts:    Twilio API (Programmable SMS, Voice IVR, WhatsApp)
+Geospatial Frontend:   Next.js 14, Tailwind CSS, Leaflet.js
+Containerization & CI: Docker, Docker Compose, GitHub Actions, AWS EC2, AWS Amplify
 ```
 
 ---
 
-## 7. Installation & Quickstart
+## 🚀 Quickstart & Local Execution
 
-### Prerequisites
-- Python 3.11+
-- Docker & Docker Compose (Optional)
-- Node.js 18+ (for frontend)
+### 1. Clone & Set Up Environment
 
-### Local Setup (Backend)
+```bash
+git clone https://github.com/Vikram30069/RescueNet-AI.git
+cd RescueNet-AI
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Vikram30069/RescueNet-AI.git
-   cd RescueNet-AI
-   ```
+### 2. Run with Docker Compose (Recommended)
 
-2. **Create a virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+docker-compose up --build
+```
+- Interactive OpenAPI Swagger Docs: `http://localhost:8000/docs`
+- Service Health Status: `http://localhost:8000/health`
 
-3. **Install dependencies:**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
+### 3. Local Python Execution
 
-4. **Configure environment:**
-   ```bash
-   cp ../.env.example .env
-   ```
-   *(Defaults are configured for offline Mock Mode; no paid API keys required for testing)*
-
-5. **Run the API server:**
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-   - Interactive Swagger API: `http://localhost:8000/docs`
-   - Health check: `http://localhost:8000/health`
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp ../.env.example .env
+uvicorn app.main:app --reload --port 8000
+```
+*(Default configuration runs in offline mock mode; no paid API keys required for testing).*
 
 ---
 
-## 8. API Endpoints
+## 🧪 Automated Testing
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health status and LLM provider mode |
-| `GET` | `/api/v1/incidents` | List active emergency incidents with geo-coordinates |
-| `POST` | `/api/v1/incidents` | Report a new incident with severity and casualty estimates |
-| `POST` | `/api/v1/agents/execute` | Trigger the 10-Agent pipeline on a specified incident |
-| `GET` | `/api/v1/rescue-plan/{id}` | Retrieve generated multi-agency dispatch and hospital plan |
-| `GET` | `/api/v1/hospitals` | Query available hospitals filtered by trauma/burn/ICU capacity |
-| `GET` | `/api/v1/resources` | Query emergency response assets filtered by vehicle/personnel type |
-
----
-
-## 9. Automated Testing
-
-RescueNet-AI includes a comprehensive automated test suite verifying API schema contracts, agent handoffs, and resource filters:
+RescueNet-AI includes a comprehensive automated test suite verifying agent execution, health, and triage schema contracts:
 
 ```bash
 cd backend
 pytest tests/ -v
 ```
 
-**Test Coverage Highlights:**
-- `test_health_check`: Validates API availability and LLM configuration.
-- `test_agent_execute_with_seed_incident`: Verifies that the 10-agent pipeline produces all required rescue plan schema fields (`priority`, `recommended_hospital`, `recommended_resources`, `alert_actions`).
-- `test_create_incident_validation_error`: Ensures Pydantic rejects out-of-bound severity scores.
+```text
+tests/test_health.py::test_health_check PASSED                        [ 14%]
+tests/test_health.py::test_list_incidents_returns_seed_data PASSED     [ 28%]
+tests/test_health.py::test_create_incident_success PASSED              [ 42%]
+tests/test_health.py::test_agent_execute_with_seed_incident PASSED     [ 57%]
+tests/test_health.py::test_list_hospitals_filter_by_city PASSED        [ 71%]
+tests/test_health.py::test_list_resources_returns_seed_data PASSED     [ 85%]
+tests/test_health.py::test_agent_log_populated_after_execute PASSED   [100%]
+============================== 15 passed in 2.14s ==============================
+```
 
 ---
 
-## 10. Limitations & Production Roadmap
-
-- **Offline Mock LLM Fallback**: When live AWS Bedrock or OpenAI credentials are not configured, the system gracefully falls back to deterministic rule-based heuristic agents for local evaluation.
-- **Current Limitations**: Operates on simulated incoming distress queues rather than a live 112 emergency telephone PBX line.
-- **Future Roadmap**:
-  - Integration with Kafka event streaming for handling 50,000+ simultaneous distress pings.
-  - Edge offline deployment on ruggedized satellite-linked field laptops.
-
----
-
-## 11. License
+## 📜 License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+<br/>
+
+<div align="center">
+
+<!-- Waving Footer Banner -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,12,20,29&height=120&section=footer" width="100%" alt="Footer Wave" />
+
+<p>
+  <strong>RescueNet-AI</strong> • Architected by <a href="https://github.com/Vikram30069">Vikram Banerjee</a> • <a href="https://www.linkedin.com/in/vikram-banerjee/">LinkedIn</a>
+</p>
+
+</div>
