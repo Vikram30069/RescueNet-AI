@@ -1,19 +1,19 @@
 <div align="center">
 
-<!-- 3D Glowing Animated Hero Banner -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,12,20,29&height=230&section=header&text=RESCUENET%20AI&fontSize=58&fontColor=ffffff&fontAlignY=36&desc=%E2%9A%A0%EF%B8%8F%2010-Agent%20Autonomous%20Disaster%20Response%20Orchestrator&descFontSize=21&descAlignY=58&descAlign=50&animation=twinkling" width="100%" alt="RescueNet AI Header Banner" />
+# 🚨 RescueNet AI
 
-<!-- Dynamic Animated Terminal Status -->
-<a href="https://github.com/Vikram30069/RescueNet-AI">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&duration=2800&pause=1000&color=EF4444&center=true&vCenter=true&width=700&lines=When+Every+Second+Counts%2C+AI+Coordinates;10-Agent+Autonomous+Disaster+Dispatch+Engine;Telangana+GIS+Asset+Routing+%E2%80%A2+CrewAI+%E2%80%A2+FastAPI+%E2%80%A2+AWS;From+Distress+Chaos+to+Rescue+Plan+in+%3C45+Seconds" alt="RescueNet AI Animated Terminal" />
-</a>
+### _When Every Second Counts, AI Coordinates_
 
-<br/><br/>
+**A 10-Agent AI Orchestrator for Real-Time Disaster Response, Survivor Prioritization & Automated Rescue Dispatch**
 
-[![Status](https://img.shields.io/badge/System-Active_Autonomous_Dispatch-red?style=for-the-badge&logo=shield&logoColor=white)](.)
+<br/>
+
+[![Status](https://img.shields.io/badge/Status-Active_Autonomous_Dispatch-brightgreen?style=for-the-badge&logo=shield&logoColor=white)](.)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![CrewAI](https://img.shields.io/badge/CrewAI-10--Agent_Swarm-ff6b6b?style=for-the-badge)](https://www.crewai.com/)
+
 [![AWS](https://img.shields.io/badge/AWS-EC2_%7C_Bedrock_%7C_Amplify-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
 [![Twilio](https://img.shields.io/badge/Twilio-SMS_%7C_Voice_%7C_WhatsApp-F22F46?style=for-the-badge&logo=twilio&logoColor=white)](https://www.twilio.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](Dockerfile)
@@ -296,9 +296,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 <br/>
 
 <div align="center">
-
-<!-- Waving Footer Banner -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=2,12,20,29&height=120&section=footer" width="100%" alt="Footer Wave" />
 
 <p>
   <strong>RescueNet-AI</strong> • Architected by <a href="https://github.com/Vikram30069">Vikram Banerjee</a> • <a href="https://www.linkedin.com/in/vikram-banerjee/">LinkedIn</a>
